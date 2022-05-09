@@ -1,5 +1,6 @@
 import Discord, { MessageEmbed } from "discord.js";
 import { UserModel } from "./db";
+import "dotenv/config";
 
 const client = new Discord.Client();
 const txtEmbed = (member) => {
@@ -46,7 +47,7 @@ const getDay = () => {
     return { day, hour, minute };
 };
 
-const messageType = async (msg, userId) => {
+const messageType = async (msg, userId, userName) => {
     const type = msg.type;
 
     const command = msg.content.split(" ")[0];
@@ -71,13 +72,19 @@ const messageType = async (msg, userId) => {
             case "!commit":
                 // 요일 가져와서 저장
                 await UserModel.updateOne(
-                    { userId },
+                    { userId, userName },
                     { commitCount },
                     { upsert: true }
                 );
                 return {
                     result: "complete",
                     message: "오늘도 commit 성공!!",
+                };
+            case "!resetcommit":
+                await resetCommitCount();
+                return {
+                    result: "reset",
+                    message: "모든 사용자의 커밋을 초기화 했습니다.",
                 };
             default:
                 break;
@@ -90,8 +97,32 @@ const resetCommitCount = async () => {
     console.log(userReset);
 };
 
+const resultEmbed = (users) => {
+    let fields = [];
+    let userObject = [...users];
+    userObject.forEach((element) => {
+        fields.push({
+            name: element.userName,
+            value: `${element.commitCount} commits`,
+            inline: true,
+        });
+    });
+    return {
+        type: "rich",
+        title: `이번주 잔디 정원사들의 실적입니다!`,
+        description: "",
+        color: 0x82e983,
+        fields,
+        image: {
+            url: `https://user-images.githubusercontent.com/55802893/167468708-1f2d14bf-9b49-4542-889f-33739a19c0c0.png`,
+            height: 0,
+            width: 0,
+        },
+    };
+};
+
 client.on("message", async (msg) => {
-    const command = await messageType(msg, msg.author.id);
+    const command = await messageType(msg, msg.author.id, msg.author.username);
     if (command === undefined) {
     } else if (command.result === "welcome") {
         const user = msg.author.username;
@@ -100,16 +131,24 @@ client.on("message", async (msg) => {
         msg.channel.send(embed);
     } else if (command.result === "complete") {
         msg.channel.send(`${msg.author.username}님 ${command.message}`);
+    } else if (command.result === "reset") {
+        msg.channel.send(`${command.message}`);
     }
     setInterval(async () => {
         const { day, hour, minute } = getDay();
         if (hour === 21 && minute > 30) {
             msg.channel.send("여려분!! commit 하셨나요??");
         }
-        if (day === "Sun" && hour === 23 && minute > 20) {
+        if (day === "Sun" && hour === 23 && minute === 50) {
             await resetCommitCount();
         }
-    }, 3599000);
+        if (day === "Sun" && hour === 23 && minute === 30) {
+            const users = await UserModel.find({});
+            const resEmbed = resultEmbed(users);
+            const embedResult = new MessageEmbed(resEmbed);
+            msg.channel.send(embedResult);
+        }
+    }, 59000);
 });
 
 client.login(process.env.TOKEN);

@@ -1,1 +1,1 @@
-worker: node index.js --exec babel-node
+worker: node src/app.js

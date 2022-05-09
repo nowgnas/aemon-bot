@@ -1,0 +1,23 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.17.10",
+    "@babel/node": "^7.17.10",
+    "@babel/plugin-transform-runtime": "^7.17.10",
+    "@babel/preset-env": "^7.17.10"
+  },
+  "scripts": {
+    "start": "nodemon index.js --exec babel-node"
+  },
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "dotenv": "^16.0.0",
+    "lib": "^4.3.3",
+    "mongoose": "^6.3.2",
+    "node-schedule": "^2.1.0"
+  }
+}

@@ -11,7 +11,7 @@
     "@babel/preset-env": "^7.17.10"
   },
   "scripts": {
-    "start": "nodemon build/app.js",
+    "start": "node build/app.js",
     "build": "babel src -d build"
   },
   "dependencies": {

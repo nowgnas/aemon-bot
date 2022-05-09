@@ -16,7 +16,6 @@
   "dependencies": {
     "discord.js": "^12.5.1",
     "dotenv": "^16.0.0",
-    "lib": "^4.3.3",
     "mongoose": "^6.3.2",
     "node-schedule": "^2.1.0"
   }

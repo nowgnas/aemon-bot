@@ -101,6 +101,15 @@ const messageType = async (msg, userId, userName) => {
           message: "모든 사용자의 커밋을 초기화 했습니다."
         };
 
+      case "!공지":
+        const user = msg.author.username;
+        const tEmbed = txtEmbed(user);
+        const embed = new _discord.MessageEmbed(tEmbed);
+        return {
+          result: "announce",
+          embed
+        };
+
       default:
         break;
     }
@@ -149,6 +158,8 @@ client.on("message", async msg => {
     msg.channel.send(`${msg.author.username}님 ${command.message}`);
   } else if (command.result === "reset") {
     msg.channel.send(`${command.message}`);
+  } else if (command.result === "announce") {
+    msg.channel.send(command.embed);
   }
 
   setInterval(async () => {

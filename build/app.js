@@ -108,10 +108,9 @@ const messageType = async (msg, userId, userName) => {
 };
 
 const resetCommitCount = async () => {
-  const userReset = await _db.UserModel.updateMany({}, {
+  await _db.UserModel.updateMany({}, {
     commitCount: 0
   });
-  console.log(userReset);
 };
 
 const resultEmbed = users => {

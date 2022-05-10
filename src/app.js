@@ -1,4 +1,4 @@
-import Discord, { MessageEmbed } from "discord.js";
+import Discord, { MessageEmbed, User } from "discord.js";
 import { UserModel } from "./db";
 import "dotenv/config";
 
@@ -54,8 +54,6 @@ const getDay = () => {
 const messageType = async (msg, userId, userName) => {
     const type = msg.type;
 
-    let commitCount = null;
-
     if (type === "GUILD_MEMBER_JOIN") {
         // new user enter
         return {
@@ -64,13 +62,6 @@ const messageType = async (msg, userId, userName) => {
         };
     } else if (type === "DEFAULT") {
         // default
-        commitCount = await UserModel.findOne({ userId });
-        if (commitCount === null) {
-            commitCount = 1;
-        } else {
-            commitCount = commitCount.commitCount + 1;
-        }
-
         let commandType = "";
 
         const command = msg.content.split(" ")[0];
@@ -86,16 +77,26 @@ const messageType = async (msg, userId, userName) => {
 
         switch (commandType) {
             case "commit":
-                // 요일 가져와서 저장
-                await UserModel.updateOne(
-                    { userId, userName },
-                    { commitCount },
-                    { upsert: true }
-                );
-                return {
-                    result: "complete",
-                    message: "오늘도 commit 성공!!",
-                };
+                const { day } = getDay();
+                const getUser = await UserModel.findOne({ userId });
+                if (getUser.commitDay.includes(day)) {
+                    return {
+                        result: "exist",
+                        message: `${userName}님 오늘 커밋 인증 하셨었네요!!`,
+                    };
+                } else {
+                    // 요일 가져와서 저장
+                    await UserModel.updateOne(
+                        { userId, userName },
+                        { $push: { commitDay: { $each: [day] } } },
+                        { upsert: true }
+                    );
+                    return {
+                        result: "complete",
+                        message: "오늘도 commit 성공!!",
+                    };
+                }
+
             case "reset":
                 await resetCommitCount();
                 return {
@@ -120,7 +121,7 @@ const messageType = async (msg, userId, userName) => {
 };
 
 const resetCommitCount = async () => {
-    await UserModel.updateMany({}, { commitCount: 0 });
+    await UserModel.updateMany({}, { commitDay: [] });
 };
 
 const resultEmbed = (users) => {
@@ -128,11 +129,11 @@ const resultEmbed = (users) => {
     let userObject = [...users];
     userObject.forEach((element) => {
         let message = "";
-        if (element.commitCount < 3) {
-            message = `${element.commitCount}일..?? 분발하세요!!`;
-        } else if (element.commitCount < 6) {
-            message = `${element.commitCount}일.. 조금만 더!!`;
-        } else if (element.commitCount === 7) {
+        if (element.commitDay.length < 3) {
+            message = `${element.commitDay.length}일..?? 분발하세요!!`;
+        } else if (element.commitDay.length < 6) {
+            message = `${element.commitDay.length}일.. 조금만 더!!`;
+        } else if (element.commitDay.length === 7) {
             message = `이번주 커밋 성공!! `;
         }
         fields.push({
@@ -181,6 +182,8 @@ client.on("message", async (msg) => {
         msg.channel.send(command.embed);
     } else if (command.result === "state") {
         msg.channel.send(command.state);
+    } else if (command.result === "exist") {
+        msg.channel.send(command.message);
     }
     setInterval(async () => {
         const { day, hour, minute } = getDay();

@@ -16,8 +16,8 @@ const UserSchema = new _mongoose.Schema({
     type: String,
     required: true
   },
-  commitCount: {
-    type: Number,
+  commitDay: {
+    type: [String],
     required: false
   }
 }, {

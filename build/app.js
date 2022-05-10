@@ -60,7 +60,6 @@ const getDay = () => {
 
 const messageType = async (msg, userId, userName) => {
   const type = msg.type;
-  let commitCount = null;
 
   if (type === "GUILD_MEMBER_JOIN") {
     // new user enter
@@ -70,16 +69,6 @@ const messageType = async (msg, userId, userName) => {
     };
   } else if (type === "DEFAULT") {
     // default
-    commitCount = await _db.UserModel.findOne({
-      userId
-    });
-
-    if (commitCount === null) {
-      commitCount = 1;
-    } else {
-      commitCount = commitCount.commitCount + 1;
-    }
-
     let commandType = "";
     const command = msg.content.split(" ")[0];
 
@@ -95,19 +84,37 @@ const messageType = async (msg, userId, userName) => {
 
     switch (commandType) {
       case "commit":
-        // 요일 가져와서 저장
-        await _db.UserModel.updateOne({
-          userId,
-          userName
-        }, {
-          commitCount
-        }, {
-          upsert: true
+        const {
+          day
+        } = getDay();
+        const getUser = await _db.UserModel.findOne({
+          userId
         });
-        return {
-          result: "complete",
-          message: "오늘도 commit 성공!!"
-        };
+
+        if (getUser.commitDay.includes(day)) {
+          return {
+            result: "exist",
+            message: `${userName}님 오늘 커밋 인증 하셨었네요!!`
+          };
+        } else {
+          // 요일 가져와서 저장
+          await _db.UserModel.updateOne({
+            userId,
+            userName
+          }, {
+            $push: {
+              commitDay: {
+                $each: [day]
+              }
+            }
+          }, {
+            upsert: true
+          });
+          return {
+            result: "complete",
+            message: "오늘도 commit 성공!!"
+          };
+        }
 
       case "reset":
         await resetCommitCount();
@@ -140,7 +147,7 @@ const messageType = async (msg, userId, userName) => {
 
 const resetCommitCount = async () => {
   await _db.UserModel.updateMany({}, {
-    commitCount: 0
+    commitDay: []
   });
 };
 
@@ -150,11 +157,11 @@ const resultEmbed = users => {
   userObject.forEach(element => {
     let message = "";
 
-    if (element.commitCount < 3) {
-      message = `${element.commitCount}일..?? 분발하세요!!`;
-    } else if (element.commitCount < 6) {
-      message = `${element.commitCount}일.. 조금만 더!!`;
-    } else if (element.commitCount === 7) {
+    if (element.commitDay.length < 3) {
+      message = `${element.commitDay.length}일..?? 분발하세요!!`;
+    } else if (element.commitDay.length < 6) {
+      message = `${element.commitDay.length}일.. 조금만 더!!`;
+    } else if (element.commitDay.length === 7) {
       message = `이번주 커밋 성공!! `;
     }
 
@@ -204,6 +211,8 @@ client.on("message", async msg => {
     msg.channel.send(command.embed);
   } else if (command.result === "state") {
     msg.channel.send(command.state);
+  } else if (command.result === "exist") {
+    msg.channel.send(command.message);
   }
 
   setInterval(async () => {

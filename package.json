@@ -12,7 +12,8 @@
   },
   "scripts": {
     "start": "node build/app.js",
-    "build": "babel src -d build"
+    "build": "babel src -d build",
+    "test": "nodemon build/app.js"
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",

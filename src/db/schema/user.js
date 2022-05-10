@@ -10,8 +10,8 @@ const UserSchema = new Schema(
             type: String,
             required: true,
         },
-        commitCount: {
-            type: Number,
+        commitDay: {
+            type: [String],
             required: false,
         },
     },

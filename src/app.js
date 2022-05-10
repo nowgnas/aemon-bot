@@ -77,25 +77,35 @@ const messageType = async (msg, userId, userName) => {
 
         switch (commandType) {
             case "commit":
+                let result = "";
+                let message = "";
+
                 const { day } = getDay();
                 const getUser = await UserModel.findOne({ userId });
-                if (getUser.commitDay.includes(day)) {
-                    return {
-                        result: "exist",
-                        message: `${userName}님 오늘 커밋 인증 하셨었네요!!`,
-                    };
+                if (!getUser) {
+                    const create = await UserModel.create({
+                        userId,
+                        userName,
+                        commitDay: [day],
+                    });
+                    result = "complete";
+                    message = "오늘도 commit 성공!!";
                 } else {
-                    // 요일 가져와서 저장
-                    await UserModel.updateOne(
-                        { userId, userName },
-                        { $push: { commitDay: { $each: [day] } } },
-                        { upsert: true }
-                    );
-                    return {
-                        result: "complete",
-                        message: "오늘도 commit 성공!!",
-                    };
+                    if (getUser.commitDay.includes(day)) {
+                        result = "exist";
+                        message = `${userName}님 오늘 커밋 인증 하셨었네요!!`;
+                    } else {
+                        await UserModel.updateOne(
+                            { userId, userName },
+                            { $push: { commitDay: { $each: [day] } } },
+                            { upsert: true }
+                        );
+                    }
                 }
+                return {
+                    result,
+                    message,
+                };
 
             case "reset":
                 await resetCommitCount();

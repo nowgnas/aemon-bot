@@ -202,7 +202,7 @@ client.on("message", async (msg) => {
     }
     setInterval(async () => {
         const { day, hour, minute } = getDay();
-        if (hour === 22 && minute == 10) {
+        if (hour === 22 && minute == 30) {
             console.log("interval");
             msg.channel.send("여려분!! commit 하셨나요??");
         }

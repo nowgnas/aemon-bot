@@ -201,7 +201,6 @@ client.on("message", async (msg) => {
         msg.channel.send(command.message);
     }
     setInterval(async () => {
-        console.log("hello");
         const { day, hour, minute } = getDay();
         if (hour === 22 && minute == 10) {
             console.log("interval");

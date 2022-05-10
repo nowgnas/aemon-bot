@@ -231,7 +231,6 @@ client.on("message", async msg => {
   }
 
   setInterval(async () => {
-    console.log("hello");
     const {
       day,
       hour,

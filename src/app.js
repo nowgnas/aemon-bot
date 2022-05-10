@@ -95,6 +95,12 @@ const messageType = async (msg, userId, userName) => {
                 const tEmbed = txtEmbed(user);
                 const embed = new MessageEmbed(tEmbed);
                 return { result: "announce", embed };
+            case "!status":
+                const state = userState();
+                return {
+                    result: "state",
+                    state,
+                };
 
             default:
                 break;
@@ -110,9 +116,17 @@ const resultEmbed = (users) => {
     let fields = [];
     let userObject = [...users];
     userObject.forEach((element) => {
+        let message = "";
+        if (element.commitCount < 3) {
+            message = `${element.commitCount}일..?? 분발하세요!!`;
+        } else if (element.commitCount < 6) {
+            message = `${element.commitCount}일.. 조금만 더!!`;
+        } else if (element.commitCount === 7) {
+            message = `이번주 커밋 성공!! `;
+        }
         fields.push({
             name: element.userName,
-            value: `${element.commitCount} commits`,
+            value: message,
             inline: true,
         });
     });
@@ -130,13 +144,23 @@ const resultEmbed = (users) => {
     };
 };
 
+const msgEmbed = (txtJson) => {
+    return new MessageEmbed(txtJson);
+};
+
+const userState = async () => {
+    const users = await UserModel.find({});
+    const resEmbed = resultEmbed(users);
+    return msgEmbed(resEmbed);
+};
+
 client.on("message", async (msg) => {
     const command = await messageType(msg, msg.author.id, msg.author.username);
     if (command === undefined) {
     } else if (command.result === "welcome") {
         const user = msg.author.username;
         const tEmbed = txtEmbed(user);
-        const embed = new MessageEmbed(tEmbed);
+        const embed = msgEmbed(tEmbed);
         msg.channel.send(embed);
     } else if (command.result === "complete") {
         msg.channel.send(`${msg.author.username}님 ${command.message}`);
@@ -144,6 +168,8 @@ client.on("message", async (msg) => {
         msg.channel.send(`${command.message}`);
     } else if (command.result === "announce") {
         msg.channel.send(command.embed);
+    } else if (command.result === "state") {
+        msg.channel.send(command.state);
     }
     setInterval(async () => {
         const { day, hour, minute } = getDay();
@@ -154,10 +180,8 @@ client.on("message", async (msg) => {
             await resetCommitCount();
         }
         if (day === "Sun" && hour === 23 && minute === 30) {
-            const users = await UserModel.find({});
-            const resEmbed = resultEmbed(users);
-            const embedResult = new MessageEmbed(resEmbed);
-            msg.channel.send(embedResult);
+            const state = userState();
+            msg.channel.send(state);
         }
     }, 59000);
 });

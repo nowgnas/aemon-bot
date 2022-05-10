@@ -238,7 +238,7 @@ client.on("message", async msg => {
       minute
     } = getDay();
 
-    if (hour === 21 && minute == 30) {
+    if (hour === 22 && minute == 1) {
       console.log("interval");
       msg.channel.send("여려분!! commit 하셨나요??");
     }
@@ -252,6 +252,6 @@ client.on("message", async msg => {
       const state = userState();
       msg.channel.send(state);
     }
-  }, 59000);
+  }, 59900);
 });
 client.login(process.env.TOKEN);

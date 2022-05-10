@@ -80,6 +80,8 @@ const messageType = async (msg, userId, userName) => {
             commandType = "reset";
         } else if (command.includes("!status")) {
             commandType = "status";
+        } else if (command.includes("!공지")) {
+            commandType = "announce";
         }
 
         switch (commandType) {
@@ -100,7 +102,7 @@ const messageType = async (msg, userId, userName) => {
                     result: "reset",
                     message: "모든 사용자의 커밋을 초기화 했습니다.",
                 };
-            case "!공지":
+            case "announce":
                 const user = msg.author.username;
                 const tEmbed = txtEmbed(user);
                 const embed = new MessageEmbed(tEmbed);

@@ -96,12 +96,11 @@ const messageType = async (msg, userId, userName) => {
                 const embed = new MessageEmbed(tEmbed);
                 return { result: "announce", embed };
             case "!status":
-                const state = userState();
+                const state = await userState();
                 return {
                     result: "state",
                     state,
                 };
-
             default:
                 break;
         }

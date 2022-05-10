@@ -114,7 +114,7 @@ const messageType = async (msg, userId, userName) => {
         };
 
       case "!status":
-        const state = userState();
+        const state = await userState();
         return {
           result: "state",
           state

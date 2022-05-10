@@ -231,14 +231,15 @@ client.on("message", async msg => {
   }
 
   setInterval(async () => {
+    console.log("hello");
     const {
       day,
       hour,
       minute
     } = getDay();
 
-    if (hour === 21 && minute > 30) {
-      console.log("announce");
+    if (hour === 21 && minute == 30) {
+      console.log("interval");
       msg.channel.send("여려분!! commit 하셨나요??");
     }
 

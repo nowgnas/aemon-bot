@@ -201,9 +201,10 @@ client.on("message", async (msg) => {
         msg.channel.send(command.message);
     }
     setInterval(async () => {
+        console.log("hello");
         const { day, hour, minute } = getDay();
-        if (hour === 21 && minute > 30) {
-            console.log("announce");
+        if (hour === 21 && minute == 30) {
+            console.log("interval");
             msg.channel.send("여려분!! commit 하셨나요??");
         }
         if (day === "Sun" && hour === 23 && minute === 50) {

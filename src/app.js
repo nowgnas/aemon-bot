@@ -185,23 +185,30 @@ client.on("message", async (msg) => {
         const embed = msgEmbed(tEmbed);
         msg.channel.send(embed);
     } else if (command.result === "complete") {
+        console.log(`${msg.author.username} commit`);
         msg.channel.send(`${msg.author.username}님 ${command.message}`);
     } else if (command.result === "reset") {
+        console.log(`reset command `);
         msg.channel.send(`${command.message}`);
     } else if (command.result === "announce") {
+        console.log(`announce command`);
         msg.channel.send(command.embed);
     } else if (command.result === "state") {
+        console.log(`state command`);
         msg.channel.send(command.state);
     } else if (command.result === "exist") {
+        console.log(`${msg.author.username} already committed`);
         msg.channel.send(command.message);
     }
     setInterval(async () => {
         const { day, hour, minute } = getDay();
         if (hour === 21 && minute > 30) {
+            console.log("announce");
             msg.channel.send("여려분!! commit 하셨나요??");
         }
         if (day === "Sun" && hour === 23 && minute === 50) {
             await resetCommitCount();
+            console.log("reset user commit");
         }
         if (day === "Sun" && hour === 23 && minute === 30) {
             const state = userState();

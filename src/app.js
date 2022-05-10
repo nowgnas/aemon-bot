@@ -54,7 +54,6 @@ const getDay = () => {
 const messageType = async (msg, userId, userName) => {
     const type = msg.type;
 
-    const command = msg.content.split(" ")[0];
     let commitCount = null;
 
     if (type === "GUILD_MEMBER_JOIN") {
@@ -72,8 +71,19 @@ const messageType = async (msg, userId, userName) => {
             commitCount = commitCount.commitCount + 1;
         }
 
-        switch (command) {
-            case "!commit":
+        let commandType = "";
+
+        const command = msg.content.split(" ")[0];
+        if (command.includes("!commit")) {
+            commandType = "commit";
+        } else if (command.includes("!resetcommit")) {
+            commandType = "reset";
+        } else if (command.includes("!status")) {
+            commandType = "status";
+        }
+
+        switch (commandType) {
+            case "commit":
                 // 요일 가져와서 저장
                 await UserModel.updateOne(
                     { userId, userName },
@@ -84,7 +94,7 @@ const messageType = async (msg, userId, userName) => {
                     result: "complete",
                     message: "오늘도 commit 성공!!",
                 };
-            case "!resetcommit":
+            case "reset":
                 await resetCommitCount();
                 return {
                     result: "reset",
@@ -95,7 +105,7 @@ const messageType = async (msg, userId, userName) => {
                 const tEmbed = txtEmbed(user);
                 const embed = new MessageEmbed(tEmbed);
                 return { result: "announce", embed };
-            case "!status":
+            case "status":
                 const state = await userState();
                 return {
                     result: "state",

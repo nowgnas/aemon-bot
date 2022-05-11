@@ -43,7 +43,7 @@ const txtEmbed = member => {
 };
 
 client.on("ready", () => {
-  client.user.setActivity("👀 요청 대기 중", {
+  client.user.setActivity("👀 요청 대기", {
     type: "CUSTOM"
   });
   console.log(`logged in as ${client.user.tag}`);

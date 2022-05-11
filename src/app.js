@@ -100,6 +100,8 @@ const messageType = async (msg, userId, userName) => {
                             { $push: { commitDay: { $each: [day] } } },
                             { upsert: true }
                         );
+                        result = "complete";
+                        message = message = "오늘도 commit 성공!!";
                     }
                 }
                 return {
@@ -202,7 +204,7 @@ client.on("message", async (msg) => {
     }
     setInterval(async () => {
         const { day, hour, minute } = getDay();
-        if (hour === 22 && minute == 30) {
+        if (hour === 22 && minute == 35) {
             console.log("interval");
             msg.channel.send("여려분!! commit 하셨나요??");
         }
@@ -214,7 +216,7 @@ client.on("message", async (msg) => {
             const state = userState();
             msg.channel.send(state);
         }
-    }, 59900);
+    }, 50000);
 });
 
 client.login(process.env.TOKEN);

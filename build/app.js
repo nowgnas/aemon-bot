@@ -44,7 +44,7 @@ const txtEmbed = member => {
 
 client.on("ready", () => {
   client.user.setActivity("👀 요청 대기", {
-    type: "CUSTOM"
+    type: "PLAYING"
   });
   console.log(`logged in as ${client.user.tag}`);
 });
@@ -233,29 +233,21 @@ client.on("message", async msg => {
   } else if (command.result === "exist") {
     console.log(`${msg.author.username} already committed`);
     msg.channel.send(command.message);
-  }
+  } // setInterval(async () => {
+  //     const { day, hour, minute } = getDay();
+  //     if (hour === 22 && minute == 35) {
+  //         console.log("interval");
+  //         msg.channel.send("여려분!! commit 하셨나요??");
+  //     }
+  //     if (day === "Sun" && hour === 23 && minute === 50) {
+  //         await resetCommitCount();
+  //         console.log("reset user commit");
+  //     }
+  //     if (day === "Sun" && hour === 23 && minute === 30) {
+  //         const state = userState();
+  //         msg.channel.send(state);
+  //     }
+  // }, 50000);
 
-  setInterval(async () => {
-    const {
-      day,
-      hour,
-      minute
-    } = getDay();
-
-    if (hour === 22 && minute == 35) {
-      console.log("interval");
-      msg.channel.send("여려분!! commit 하셨나요??");
-    }
-
-    if (day === "Sun" && hour === 23 && minute === 50) {
-      await resetCommitCount();
-      console.log("reset user commit");
-    }
-
-    if (day === "Sun" && hour === 23 && minute === 30) {
-      const state = userState();
-      msg.channel.send(state);
-    }
-  }, 50000);
 });
 client.login(process.env.TOKEN);

@@ -1,4 +1,4 @@
-import Discord, { MessageEmbed, User } from "discord.js";
+import Discord, { MessageEmbed } from "discord.js";
 import { UserModel } from "./db";
 import "dotenv/config";
 
@@ -40,6 +40,7 @@ const txtEmbed = (member) => {
 };
 
 client.on("ready", () => {
+    client.user.setActivity("👀 요청 대기 중", { type: "PLAYING" });
     console.log(`logged in as ${client.user.tag}`);
 });
 

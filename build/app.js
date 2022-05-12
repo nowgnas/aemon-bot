@@ -16,7 +16,7 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 
 const sendToChannel = async () => {
   try {
-    const url = process.env.TEST_WEBHOOK;
+    const url = process.env.AEMON_WEBHOOK;
     await _axios.default.post(url, {
       content: "오늘 commit 하셨나요????"
     });
@@ -34,7 +34,7 @@ const sendToChannel = async () => {
 
 const sendStatus = async () => {
   try {
-    const url = process.env.TEST_WEBHOOK;
+    const url = process.env.AEMON_WEBHOOK;
     const users = await _db.UserModel.find({});
     const resEmbed = dailyStatus(users);
     await _axios.default.post(url, {
@@ -64,7 +64,7 @@ class sendMessage {
           minute
         } = getDay();
 
-        if (hour === 0 && minute === 30) {
+        if (hour === 23 && minute === 50) {
           console.log("daily member status");
           sendStatus();
         }
@@ -85,7 +85,7 @@ class sendMessage {
 
 }
 
-sendMessage.timer(3000);
+sendMessage.timer(58000);
 const client = new _discord.default.Client();
 
 const txtEmbed = member => {

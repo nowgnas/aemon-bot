@@ -32,6 +32,26 @@ const sendToChannel = async () => {
   return response;
 };
 
+const sendStatus = async () => {
+  try {
+    const url = "https://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
+    const users = await _db.UserModel.find({});
+    const resEmbed = resultEmbed(users);
+    await _axios.default.post(url, {
+      embeds: resEmbed
+    });
+    console.log("send message");
+  } catch (error) {
+    console.log(error);
+  }
+
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify("Hello from Lambda!")
+  };
+  return response;
+};
+
 class sendMessage {
   // todo timer 일단 보류
   static timer(ms) {
@@ -44,9 +64,9 @@ class sendMessage {
           minute
         } = getDay();
 
-        if (hour === 23 && minute === 50) {
+        if (hour === 23 && minute === 59) {
           console.log("daily member status");
-          userState();
+          sendStatus();
         }
 
         if (hour === 22 && minute == 0) {

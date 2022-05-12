@@ -6,7 +6,7 @@ import "dotenv/config";
 const sendToChannel = async () => {
     try {
         const url =
-            "hhttps://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
+            "https://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
         await axios.post(url, {
             content: "오늘 commit 하셨나요????",
         });
@@ -43,7 +43,7 @@ class sendMessage {
     }
 }
 
-sendMessage.timer(59900);
+sendMessage.timer(58000);
 
 const client = new Discord.Client();
 const txtEmbed = (member) => {

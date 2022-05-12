@@ -16,7 +16,7 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 
 const sendToChannel = async () => {
   try {
-    const url = "hhttps://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
+    const url = "https://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
     await _axios.default.post(url, {
       content: "오늘 commit 하셨나요????"
     });
@@ -60,7 +60,7 @@ class sendMessage {
 
 }
 
-sendMessage.timer(59900);
+sendMessage.timer(58000);
 const client = new _discord.default.Client();
 
 const txtEmbed = member => {

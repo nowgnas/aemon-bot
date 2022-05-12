@@ -28,7 +28,10 @@ class sendMessage {
             const timers = setInterval(() => {
                 console.log(`${ms / 1000} sec passed`);
                 let { day, hour, minute } = getDay();
-
+                if (hour === 23 && minute === 50) {
+                    console.log("daily member status");
+                    userState();
+                }
                 if (hour === 22 && minute == 0) {
                     console.log("daily announce");
                     sendToChannel();

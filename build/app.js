@@ -14,12 +14,9 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-const testWebHook = "https://discord.com/api/webhooks/973611311919419402/RBw1vTy9xfY2f4Itw89hLvzKxcoe3S1Ph3qijrtd4cguML2XboPAZcSo31EL9fMjTkx4";
-const aemonWebHook = "https://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
-
 const sendToChannel = async () => {
   try {
-    const url = aemonWebHook;
+    const url = process.env.TEST_WEBHOOK;
     await _axios.default.post(url, {
       content: "오늘 commit 하셨나요????"
     });
@@ -37,7 +34,7 @@ const sendToChannel = async () => {
 
 const sendStatus = async () => {
   try {
-    const url = aemonWebHook;
+    const url = process.env.TEST_WEBHOOK;
     const users = await _db.UserModel.find({});
     const resEmbed = dailyStatus(users);
     await _axios.default.post(url, {
@@ -67,7 +64,7 @@ class sendMessage {
           minute
         } = getDay();
 
-        if (hour === 0 && minute === 15) {
+        if (hour === 0 && minute === 30) {
           console.log("daily member status");
           sendStatus();
         }
@@ -88,7 +85,7 @@ class sendMessage {
 
 }
 
-sendMessage.timer(58000);
+sendMessage.timer(3000);
 const client = new _discord.default.Client();
 
 const txtEmbed = member => {

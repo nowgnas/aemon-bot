@@ -3,15 +3,9 @@ import { UserModel } from "./db";
 import axios from "axios";
 import "dotenv/config";
 
-const testWebHook =
-    "https://discord.com/api/webhooks/973611311919419402/RBw1vTy9xfY2f4Itw89hLvzKxcoe3S1Ph3qijrtd4cguML2XboPAZcSo31EL9fMjTkx4";
-
-const aemonWebHook =
-    "https://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
-
 const sendToChannel = async () => {
     try {
-        const url = aemonWebHook;
+        const url = process.env.AEMON_WEBHOOK;
         await axios.post(url, {
             content: "오늘 commit 하셨나요????",
         });
@@ -28,7 +22,7 @@ const sendToChannel = async () => {
 
 const sendStatus = async () => {
     try {
-        const url = aemonWebHook;
+        const url = process.env.AEMON_WEBHOOK;
         const users = await UserModel.find({});
         const resEmbed = dailyStatus(users);
         await axios.post(url, {

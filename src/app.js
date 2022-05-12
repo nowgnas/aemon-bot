@@ -3,10 +3,15 @@ import { UserModel } from "./db";
 import axios from "axios";
 import "dotenv/config";
 
+const testWebHook =
+    "https://discord.com/api/webhooks/973611311919419402/RBw1vTy9xfY2f4Itw89hLvzKxcoe3S1Ph3qijrtd4cguML2XboPAZcSo31EL9fMjTkx4";
+
+const aemonWebHook =
+    "https://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
+
 const sendToChannel = async () => {
     try {
-        const url =
-            "https://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
+        const url = aemonWebHook;
         await axios.post(url, {
             content: "오늘 commit 하셨나요????",
         });
@@ -23,12 +28,11 @@ const sendToChannel = async () => {
 
 const sendStatus = async () => {
     try {
-        const url =
-            "https://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
+        const url = aemonWebHook;
         const users = await UserModel.find({});
-        const resEmbed = resultEmbed(users);
+        const resEmbed = dailyStatus(users);
         await axios.post(url, {
-            embeds: resEmbed,
+            embeds: [resEmbed],
         });
         console.log("send message");
     } catch (error) {
@@ -48,7 +52,7 @@ class sendMessage {
             const timers = setInterval(() => {
                 console.log(`${ms / 1000} sec passed`);
                 let { day, hour, minute } = getDay();
-                if (hour === 23 && minute === 59) {
+                if (hour === 0 && minute === 15) {
                     console.log("daily member status");
                     sendStatus();
                 }
@@ -201,6 +205,38 @@ const messageType = async (msg, userId, userName) => {
 
 const resetCommitCount = async () => {
     await UserModel.updateMany({}, { commitDay: [] });
+};
+
+const dailyStatus = (users) => {
+    let fields = [];
+    let userObject = [...users];
+    const { day } = getDay();
+
+    userObject.forEach((element) => {
+        let message = "";
+        if (element.commitDay.includes(day)) {
+            message = `커밋 성공 ☺️`;
+        } else {
+            message = `커미잇..🥲`;
+        }
+        fields.push({
+            name: element.userName,
+            value: message,
+            inline: true,
+        });
+    });
+    return {
+        type: "rich",
+        title: `오늘은 잔디를 심으셨나요???`,
+        description: "",
+        color: 0x82e983,
+        fields,
+        image: {
+            url: `https://user-images.githubusercontent.com/55802893/167468708-1f2d14bf-9b49-4542-889f-33739a19c0c0.png`,
+            height: 0,
+            width: 0,
+        },
+    };
 };
 
 const resultEmbed = (users) => {

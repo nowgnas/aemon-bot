@@ -1,6 +1,49 @@
 import Discord, { MessageEmbed } from "discord.js";
 import { UserModel } from "./db";
+import axios from "axios";
 import "dotenv/config";
+
+const sendToChannel = async () => {
+    try {
+        const url =
+            "hhttps://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
+        await axios.post(url, {
+            content: "오늘 commit 하셨나요????",
+        });
+        console.log("send message");
+    } catch (error) {
+        console.log(error);
+    }
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify("Hello from Lambda!"),
+    };
+    return response;
+};
+
+class sendMessage {
+    // todo timer 일단 보류
+    static timer(ms) {
+        return new Promise((resolve) => {
+            const timers = setInterval(() => {
+                console.log(`${ms / 1000} sec passed`);
+                let { day, hour, minute } = getDay();
+
+                if (hour === 22 && minute == 0) {
+                    console.log("daily announce");
+                    sendToChannel();
+                }
+                if (day === "Sun" && hour === 23 && minute === 50) {
+                    const state = userState();
+                    resetCommitCount();
+                    console.log("reset user commit");
+                }
+            }, ms);
+        });
+    }
+}
+
+sendMessage.timer(59900);
 
 const client = new Discord.Client();
 const txtEmbed = (member) => {
@@ -203,21 +246,6 @@ client.on("message", async (msg) => {
         console.log(`${msg.author.username} already committed`);
         msg.channel.send(command.message);
     }
-    // setInterval(async () => {
-    //     const { day, hour, minute } = getDay();
-    //     if (hour === 22 && minute == 35) {
-    //         console.log("interval");
-    //         msg.channel.send("여려분!! commit 하셨나요??");
-    //     }
-    //     if (day === "Sun" && hour === 23 && minute === 50) {
-    //         await resetCommitCount();
-    //         console.log("reset user commit");
-    //     }
-    //     if (day === "Sun" && hour === 23 && minute === 30) {
-    //         const state = userState();
-    //         msg.channel.send(state);
-    //     }
-    // }, 50000);
 });
 
 client.login(process.env.TOKEN);

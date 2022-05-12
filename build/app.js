@@ -1,8 +1,12 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 var _discord = _interopRequireWildcard(require("discord.js"));
 
 var _db = require("./db");
+
+var _axios = _interopRequireDefault(require("axios"));
 
 require("dotenv/config");
 
@@ -10,6 +14,53 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
+const sendToChannel = async () => {
+  try {
+    const url = "hhttps://discord.com/api/webhooks/973397521680433152/HEWz7fjxgSTEE8s6j5XcR0VgdkV6CXO05QKFwzVkaOK490y7mLZPNLF4Ktmxth3qxvit";
+    await _axios.default.post(url, {
+      content: "오늘 commit 하셨나요????"
+    });
+    console.log("send message");
+  } catch (error) {
+    console.log(error);
+  }
+
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify("Hello from Lambda!")
+  };
+  return response;
+};
+
+class sendMessage {
+  // todo timer 일단 보류
+  static timer(ms) {
+    return new Promise(resolve => {
+      const timers = setInterval(() => {
+        console.log(`${ms / 1000} sec passed`);
+        let {
+          day,
+          hour,
+          minute
+        } = getDay();
+
+        if (hour === 22 && minute == 0) {
+          console.log("daily announce");
+          sendToChannel();
+        }
+
+        if (day === "Sun" && hour === 23 && minute === 50) {
+          const state = userState();
+          resetCommitCount();
+          console.log("reset user commit");
+        }
+      }, ms);
+    });
+  }
+
+}
+
+sendMessage.timer(59900);
 const client = new _discord.default.Client();
 
 const txtEmbed = member => {
@@ -233,21 +284,6 @@ client.on("message", async msg => {
   } else if (command.result === "exist") {
     console.log(`${msg.author.username} already committed`);
     msg.channel.send(command.message);
-  } // setInterval(async () => {
-  //     const { day, hour, minute } = getDay();
-  //     if (hour === 22 && minute == 35) {
-  //         console.log("interval");
-  //         msg.channel.send("여려분!! commit 하셨나요??");
-  //     }
-  //     if (day === "Sun" && hour === 23 && minute === 50) {
-  //         await resetCommitCount();
-  //         console.log("reset user commit");
-  //     }
-  //     if (day === "Sun" && hour === 23 && minute === 30) {
-  //         const state = userState();
-  //         msg.channel.send(state);
-  //     }
-  // }, 50000);
-
+  }
 });
 client.login(process.env.TOKEN);

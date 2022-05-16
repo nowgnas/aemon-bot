@@ -55,7 +55,7 @@ class sendMessage {
                     sendToChannel();
                 }
                 if (day === "Sun" && hour === 23 && minute === 50) {
-                    const state = userState();
+                    userState();
                     resetCommitCount();
                     console.log("reset user commit");
                 }

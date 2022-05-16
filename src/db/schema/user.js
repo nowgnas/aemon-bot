@@ -14,6 +14,10 @@ const UserSchema = new Schema(
             type: [String],
             required: false,
         },
+        fine: {
+            type: Number,
+            required: false,
+        },
     },
     {
         timestamps: true,

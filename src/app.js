@@ -8,7 +8,7 @@ const checkFine = async () => {
     // 벌금 계산은 그냘 59분에 이뤄진다.
     try {
         const { day } = getDay();
-        const url = process.env.TEST_WEBHOOK;
+        const url = process.env.AEMON_WEBHOOK;
         const users = await UserModel.find({});
 
         [...users].forEach(async (ele) => {
@@ -53,7 +53,7 @@ const sendToChannel = async () => {
 // daily status  전송
 const sendStatus = async () => {
     try {
-        const url = process.env.TEST_WEBHOOK;
+        const url = process.env.AEMON_WEBHOOK;
         const users = await UserModel.find({});
         const resEmbed = dailyStatus(users);
         await axios.post(url, {
@@ -73,7 +73,7 @@ const sendStatus = async () => {
 // 벌금 현황 embed로 전송
 const userFineStatus = async () => {
     try {
-        const url = process.env.TEST_WEBHOOK;
+        const url = process.env.AEMON_WEBHOOK;
         const users = await UserModel.find({});
         const resEmbed = fineStatus(users);
         await axios.post(url, {

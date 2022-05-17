@@ -14,7 +14,6 @@ const checkFine = async () => {
         [...users].forEach(async (ele) => {
             let fine = ele.fine;
             const todayCheck = ele.commitDay.includes(day) ? 0 : 1000;
-            console.log(`${ele.userName}  ${ele.fine}`);
             await UserModel.updateOne(
                 { _id: ele._id },
                 { $set: { fine: fine + todayCheck } }

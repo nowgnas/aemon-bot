@@ -19,6 +19,10 @@ const UserSchema = new _mongoose.Schema({
   commitDay: {
     type: [String],
     required: false
+  },
+  fine: {
+    type: Number,
+    required: false
   }
 }, {
   timestamps: true

@@ -3,6 +3,37 @@ import { UserModel } from "./db";
 import axios from "axios";
 import "dotenv/config";
 
+// 벌금 계산
+const checkFine = async () => {
+    // 벌금 계산은 그냘 59분에 이뤄진다.
+    try {
+        const { day } = getDay();
+        const url = process.env.TEST_WEBHOOK;
+        const users = await UserModel.find({});
+
+        [...users].forEach(async (ele) => {
+            let fine = ele.fine;
+            const todayCheck = ele.commitDay.includes(day) ? 0 : 1000;
+            console.log(`${ele.userName}  ${ele.fine}`);
+            await UserModel.updateOne(
+                { _id: ele._id },
+                { $set: { fine: fine + todayCheck } }
+            );
+        });
+        await axios.post(url, {
+            content: "벌금 계산 완료!!",
+        });
+    } catch (error) {
+        console.log(error);
+    }
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify("Hello from Lambda!"),
+    };
+    return response;
+};
+
+// daily 커밋 확인
 const sendToChannel = async () => {
     try {
         const url = process.env.AEMON_WEBHOOK;
@@ -20,9 +51,10 @@ const sendToChannel = async () => {
     return response;
 };
 
+// daily status  전송
 const sendStatus = async () => {
     try {
-        const url = process.env.AEMON_WEBHOOK;
+        const url = process.env.TEST_WEBHOOK;
         const users = await UserModel.find({});
         const resEmbed = dailyStatus(users);
         await axios.post(url, {
@@ -39,6 +71,27 @@ const sendStatus = async () => {
     return response;
 };
 
+// 벌금 현황 embed로 전송
+const userFineStatus = async () => {
+    try {
+        const url = process.env.TEST_WEBHOOK;
+        const users = await UserModel.find({});
+        const resEmbed = fineStatus(users);
+        await axios.post(url, {
+            embeds: [resEmbed],
+        });
+        console.log("send message");
+    } catch (error) {
+        console.log(error);
+    }
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify("Hello from Lambda!"),
+    };
+    return response;
+};
+
+// 시간에 맞춰 메세지 보내기 webhook으로 보내기
 class sendMessage {
     // todo timer 일단 보류
     static timer(ms) {
@@ -46,7 +99,7 @@ class sendMessage {
             const timers = setInterval(() => {
                 console.log(`${ms / 1000} sec passed`);
                 let { day, hour, minute } = getDay();
-                if (hour === 23 && minute === 50) {
+                if (hour === 23 && minute === 30) {
                     console.log("daily member status");
                     sendStatus();
                 }
@@ -59,14 +112,23 @@ class sendMessage {
                     resetCommitCount();
                     console.log("reset user commit");
                 }
+                if (hour === 22 && minute === 54) {
+                    userFineStatus();
+                }
+                if (hour === 23 && minute === 59) {
+                    checkFine();
+                }
             }, ms);
         });
     }
 }
 
-sendMessage.timer(58000);
+// sendMessage.timer(58000);
+sendMessage.timer(3000);
 
 const client = new Discord.Client();
+
+// 공지 embed
 const txtEmbed = (member) => {
     return {
         type: "rich",
@@ -103,11 +165,7 @@ const txtEmbed = (member) => {
     };
 };
 
-client.on("ready", () => {
-    client.user.setActivity("👀 요청 대기", { type: "PLAYING" });
-    console.log(`logged in as ${client.user.tag}`);
-});
-
+// 날짜 받기
 const getDay = () => {
     const date = new Date();
     let day = date.toString().slice(0, 3);
@@ -116,6 +174,123 @@ const getDay = () => {
     return { day, hour, minute };
 };
 
+// daily commit 확인
+const dailyStatus = (users) => {
+    let fields = [];
+    let userObject = [...users];
+    const { day } = getDay();
+
+    userObject.forEach(async (element) => {
+        let message = "";
+        if (element.commitDay.includes(day)) {
+            message = `커밋 성공 ☺️`;
+        } else {
+            message = `커미잇..🥲`;
+        }
+        fields.push({
+            name: element.userName,
+            value: message,
+            inline: true,
+        });
+    });
+    return {
+        type: "rich",
+        title: `오늘은 잔디를 심으셨나요???`,
+        description: "",
+        color: 0x82e983,
+        fields,
+        image: {
+            url: `https://user-images.githubusercontent.com/55802893/167468708-1f2d14bf-9b49-4542-889f-33739a19c0c0.png`,
+            height: 0,
+            width: 0,
+        },
+    };
+};
+
+// 일요일 commit 이력 초기화
+const resetCommitCount = async () => {
+    await UserModel.updateMany({}, { commitDay: [] });
+};
+
+// 일주일 커밋 확인
+const resultEmbed = (users) => {
+    let fields = [];
+    let userObject = [...users];
+    userObject.forEach((element) => {
+        let message = "";
+
+        if (element.commitDay.length < 3) {
+            message = `${element.commitDay.length}일..?? 분발하세요!!`;
+        } else if (element.commitDay.length < 6) {
+            message = `${element.commitDay.length}일.. 조금만 더!!`;
+        } else if (element.commitDay.length === 7) {
+            message = `이번주 커밋 성공!! `;
+        }
+        fields.push({
+            name: element.userName,
+            value: message,
+            inline: true,
+        });
+    });
+    return {
+        type: "rich",
+        title: `이번주 잔디 정원사들의 실적입니다!`,
+        description: "",
+        color: 0x82e983,
+        fields,
+        image: {
+            url: `https://user-images.githubusercontent.com/55802893/167468708-1f2d14bf-9b49-4542-889f-33739a19c0c0.png`,
+            height: 0,
+            width: 0,
+        },
+    };
+};
+
+// 벌금 현황을 embed로 전송
+const fineStatus = (users) => {
+    let fields = [];
+    let userObject = [...users];
+    userObject.forEach((element) => {
+        let fineMessage = "";
+        if (element.fine === 0) {
+            fineMessage = "잘 하고 계시네요☺️";
+        } else {
+            fineMessage = `벌금은 ${element.fine}원 입니당`;
+        }
+        console.log(fineMessage);
+        fields.push({
+            name: element.userName,
+            value: fineMessage,
+            inline: true,
+        });
+    });
+    return {
+        type: "rich",
+        title: `이번주 잔디 정원사들의 벌금 현황입니다!`,
+        description: "",
+        color: 0x82e983,
+        fields,
+        image: {
+            url: `https://user-images.githubusercontent.com/55802893/167468708-1f2d14bf-9b49-4542-889f-33739a19c0c0.png`,
+            height: 0,
+            width: 0,
+        },
+    };
+};
+
+// make message embed
+const msgEmbed = (txtJson) => {
+    return new MessageEmbed(txtJson);
+};
+
+// 사용자들의 상태를 embed로 전송
+const userState = async () => {
+    const users = await UserModel.find({});
+    const resEmbed = resultEmbed(users);
+    return msgEmbed(resEmbed);
+};
+
+// command switch
 const messageType = async (msg, userId, userName) => {
     const type = msg.type;
 
@@ -138,6 +313,8 @@ const messageType = async (msg, userId, userName) => {
             commandType = "status";
         } else if (command.includes("!공지")) {
             commandType = "announce";
+        } else if (command.includes("!fine")) {
+            commandType = "fine";
         }
 
         switch (commandType) {
@@ -191,90 +368,19 @@ const messageType = async (msg, userId, userName) => {
                     result: "state",
                     state,
                 };
+            case "fine":
+                const fine = await userFineStatus();
+                return {
+                    result: "fine",
+                    fine,
+                };
             default:
                 break;
         }
     }
 };
 
-const resetCommitCount = async () => {
-    await UserModel.updateMany({}, { commitDay: [] });
-};
-
-const dailyStatus = (users) => {
-    let fields = [];
-    let userObject = [...users];
-    const { day } = getDay();
-
-    userObject.forEach((element) => {
-        let message = "";
-        if (element.commitDay.includes(day)) {
-            message = `커밋 성공 ☺️`;
-        } else {
-            message = `커미잇..🥲`;
-        }
-        fields.push({
-            name: element.userName,
-            value: message,
-            inline: true,
-        });
-    });
-    return {
-        type: "rich",
-        title: `오늘은 잔디를 심으셨나요???`,
-        description: "",
-        color: 0x82e983,
-        fields,
-        image: {
-            url: `https://user-images.githubusercontent.com/55802893/167468708-1f2d14bf-9b49-4542-889f-33739a19c0c0.png`,
-            height: 0,
-            width: 0,
-        },
-    };
-};
-
-const resultEmbed = (users) => {
-    let fields = [];
-    let userObject = [...users];
-    userObject.forEach((element) => {
-        let message = "";
-        if (element.commitDay.length < 3) {
-            message = `${element.commitDay.length}일..?? 분발하세요!!`;
-        } else if (element.commitDay.length < 6) {
-            message = `${element.commitDay.length}일.. 조금만 더!!`;
-        } else if (element.commitDay.length === 7) {
-            message = `이번주 커밋 성공!! `;
-        }
-        fields.push({
-            name: element.userName,
-            value: message,
-            inline: true,
-        });
-    });
-    return {
-        type: "rich",
-        title: `이번주 잔디 정원사들의 실적입니다!`,
-        description: "",
-        color: 0x82e983,
-        fields,
-        image: {
-            url: `https://user-images.githubusercontent.com/55802893/167468708-1f2d14bf-9b49-4542-889f-33739a19c0c0.png`,
-            height: 0,
-            width: 0,
-        },
-    };
-};
-
-const msgEmbed = (txtJson) => {
-    return new MessageEmbed(txtJson);
-};
-
-const userState = async () => {
-    const users = await UserModel.find({});
-    const resEmbed = resultEmbed(users);
-    return msgEmbed(resEmbed);
-};
-
+// message action
 client.on("message", async (msg) => {
     const command = await messageType(msg, msg.author.id, msg.author.username);
     if (command === undefined) {
@@ -298,7 +404,15 @@ client.on("message", async (msg) => {
     } else if (command.result === "exist") {
         console.log(`${msg.author.username} already committed`);
         msg.channel.send(command.message);
+    } else if (command.result === "fine") {
+        console.log("user fine status");
+        msg.channel.send(command.message);
     }
+});
+
+client.on("ready", () => {
+    client.user.setActivity("👀 요청 대기", { type: "PLAYING" });
+    console.log(`logged in as ${client.user.tag}`);
 });
 
 client.login(process.env.TOKEN);

@@ -122,8 +122,8 @@ class sendMessage {
     }
 }
 
-// sendMessage.timer(58000);
-sendMessage.timer(3000);
+sendMessage.timer(58000);
+// sendMessage.timer(3000);
 
 const client = new Discord.Client();
 

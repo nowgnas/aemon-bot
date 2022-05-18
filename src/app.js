@@ -37,7 +37,7 @@ const sendToChannel = async () => {
     try {
         const url = process.env.AEMON_WEBHOOK;
         await axios.post(url, {
-            content: "오늘 commit 하셨나요????",
+            content: "오늘 하루도 고생하셨어요!! 커밋은 잊지 않으셨죠??",
         });
         console.log("send message");
     } catch (error) {
@@ -111,10 +111,12 @@ class sendMessage {
                     resetCommitCount();
                     console.log("reset user commit");
                 }
-                if (hour === 22 && minute === 54) {
+                if (hour === 22 && minute === 50) {
+                    console.log("fine announce");
                     userFineStatus();
                 }
                 if (hour === 23 && minute === 59) {
+                    console.log("check fine announce");
                     checkFine();
                 }
             }, ms);
@@ -194,7 +196,7 @@ const dailyStatus = (users) => {
     });
     return {
         type: "rich",
-        title: `오늘은 잔디를 심으셨나요???`,
+        title: `오늘의 잔디 정원사들은??`,
         description: "",
         color: 0x82e983,
         fields,
@@ -410,7 +412,7 @@ client.on("message", async (msg) => {
 });
 
 client.on("ready", () => {
-    client.user.setActivity("👀 요청 대기", { type: "PLAYING" });
+    client.user.setActivity("👀 정원사들 요청 대기", { type: "PLAYING" });
     console.log(`logged in as ${client.user.tag}`);
 });
 

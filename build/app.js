@@ -21,12 +21,11 @@ const checkFine = async () => {
     const {
       day
     } = getDay();
-    const url = process.env.TEST_WEBHOOK;
+    const url = process.env.AEMON_WEBHOOK;
     const users = await _db.UserModel.find({});
     [...users].forEach(async ele => {
       let fine = ele.fine;
       const todayCheck = ele.commitDay.includes(day) ? 0 : 1000;
-      console.log(`${ele.userName}  ${ele.fine}`);
       await _db.UserModel.updateOne({
         _id: ele._id
       }, {
@@ -54,7 +53,7 @@ const sendToChannel = async () => {
   try {
     const url = process.env.AEMON_WEBHOOK;
     await _axios.default.post(url, {
-      content: "오늘 commit 하셨나요????"
+      content: "오늘 하루도 고생하셨어요!! 커밋은 잊지 않으셨죠??"
     });
     console.log("send message");
   } catch (error) {
@@ -71,7 +70,7 @@ const sendToChannel = async () => {
 
 const sendStatus = async () => {
   try {
-    const url = process.env.TEST_WEBHOOK;
+    const url = process.env.AEMON_WEBHOOK;
     const users = await _db.UserModel.find({});
     const resEmbed = dailyStatus(users);
     await _axios.default.post(url, {
@@ -92,7 +91,7 @@ const sendStatus = async () => {
 
 const userFineStatus = async () => {
   try {
-    const url = process.env.TEST_WEBHOOK;
+    const url = process.env.AEMON_WEBHOOK;
     const users = await _db.UserModel.find({});
     const resEmbed = fineStatus(users);
     await _axios.default.post(url, {
@@ -139,21 +138,23 @@ class sendMessage {
           console.log("reset user commit");
         }
 
-        if (hour === 22 && minute === 54) {
+        if (hour === 22 && minute === 50) {
+          console.log("fine announce");
           userFineStatus();
         }
 
         if (hour === 23 && minute === 59) {
+          console.log("check fine announce");
           checkFine();
         }
       }, ms);
     });
   }
 
-} // sendMessage.timer(58000);
+}
 
+sendMessage.timer(58000); // sendMessage.timer(3000);
 
-sendMessage.timer(3000);
 const client = new _discord.default.Client(); // 공지 embed
 
 const txtEmbed = member => {
@@ -223,7 +224,7 @@ const dailyStatus = users => {
   });
   return {
     type: "rich",
-    title: `오늘은 잔디를 심으셨나요???`,
+    title: `오늘의 잔디 정원사들은??`,
     description: "",
     color: 0x82e983,
     fields,
@@ -462,7 +463,7 @@ client.on("message", async msg => {
   }
 });
 client.on("ready", () => {
-  client.user.setActivity("👀 요청 대기", {
+  client.user.setActivity("👀 정원사들 요청 대기", {
     type: "PLAYING"
   });
   console.log(`logged in as ${client.user.tag}`);

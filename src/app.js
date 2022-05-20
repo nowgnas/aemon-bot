@@ -8,7 +8,6 @@ const checkFine = async () => {
     // 벌금 계산은 그냘 59분에 이뤄진다.
     try {
         const { day } = getDay();
-        const url = process.env.AEMON_WEBHOOK;
         const users = await UserModel.find({});
 
         [...users].forEach(async (ele) => {
@@ -18,9 +17,6 @@ const checkFine = async () => {
                 { _id: ele._id },
                 { $set: { fine: fine + todayCheck } }
             );
-        });
-        await axios.post(url, {
-            content: "벌금 계산 완료!!",
         });
     } catch (error) {
         console.log(error);
@@ -102,18 +98,12 @@ class sendMessage {
                     console.log("daily member status");
                     sendStatus();
                 }
-                if (hour === 22 && minute == 0) {
-                    console.log("daily announce");
-                    sendToChannel();
-                }
                 if (day === "Sun" && hour === 23 && minute === 50) {
                     userState();
+                    userFineStatus();
                     resetCommitCount();
                     console.log("reset user commit");
-                }
-                if (hour === 22 && minute === 50) {
                     console.log("fine announce");
-                    userFineStatus();
                 }
                 if (hour === 23 && minute === 59) {
                     console.log("check fine announce");
@@ -196,7 +186,7 @@ const dailyStatus = (users) => {
     });
     return {
         type: "rich",
-        title: `오늘의 잔디 정원사들은??`,
+        title: `오늘 하루도 고생하셨어요!! 커밋은 잊지 않으셨죠??`,
         description: "",
         color: 0x82e983,
         fields,

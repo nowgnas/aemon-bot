@@ -14,14 +14,35 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-// 벌금 계산
+const qrCheckIn = async () => {
+  try {
+    const url = process.env.AEMON_WEBHOOK;
+    await _axios.default.post(url, {
+      content: "QR 체크인 하세요!!"
+    });
+  } catch (error) {
+    console.log("send qr message error");
+  }
+};
+
+const qrCheckOut = async () => {
+  try {
+    const url = process.env.AEMON_WEBHOOK;
+    await _axios.default.post(url, {
+      content: "QR 체크아웃 하세요!!"
+    });
+  } catch (error) {
+    console.log("send qr message error");
+  }
+}; // 벌금 계산
+
+
 const checkFine = async () => {
   // 벌금 계산은 그냘 59분에 이뤄진다.
   try {
     const {
       day
     } = getDay();
-    const url = process.env.AEMON_WEBHOOK;
     const users = await _db.UserModel.find({});
     [...users].forEach(async ele => {
       let fine = ele.fine;
@@ -34,28 +55,6 @@ const checkFine = async () => {
         }
       });
     });
-    await _axios.default.post(url, {
-      content: "벌금 계산 완료!!"
-    });
-  } catch (error) {
-    console.log(error);
-  }
-
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify("Hello from Lambda!")
-  };
-  return response;
-}; // daily 커밋 확인
-
-
-const sendToChannel = async () => {
-  try {
-    const url = process.env.AEMON_WEBHOOK;
-    await _axios.default.post(url, {
-      content: "오늘 하루도 고생하셨어요!! 커밋은 잊지 않으셨죠??"
-    });
-    console.log("send message");
   } catch (error) {
     console.log(error);
   }
@@ -127,25 +126,25 @@ class sendMessage {
           sendStatus();
         }
 
-        if (hour === 22 && minute == 0) {
-          console.log("daily announce");
-          sendToChannel();
-        }
-
-        if (day === "Sun" && hour === 23 && minute === 50) {
+        if (day === "Sun" && hour === 23 && minute === 59) {
           userState();
+          userFineStatus();
           resetCommitCount();
           console.log("reset user commit");
-        }
-
-        if (hour === 22 && minute === 50) {
           console.log("fine announce");
-          userFineStatus();
         }
 
-        if (hour === 23 && minute === 59) {
+        if (hour === 23 && minute === 57) {
           console.log("check fine announce");
           checkFine();
+        }
+
+        if ((day === "Tue" || day === "Thu") && hour === 9 && minute === 50) {
+          qrCheckIn();
+        }
+
+        if ((day === "Tue" || day === "Thu") && hour === 17 && minute === 50) {
+          qrCheckOut();
         }
       }, ms);
     });
@@ -224,7 +223,7 @@ const dailyStatus = users => {
   });
   return {
     type: "rich",
-    title: `오늘의 잔디 정원사들은??`,
+    title: `오늘 하루도 고생하셨어요!! 커밋은 잊지 않으셨죠??`,
     description: "",
     color: 0x82e983,
     fields,

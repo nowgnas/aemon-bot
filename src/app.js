@@ -3,6 +3,28 @@ import { UserModel } from "./db";
 import axios from "axios";
 import "dotenv/config";
 
+const qrCheckIn = async () => {
+    try {
+        const url = process.env.AEMON_WEBHOOK;
+        await axios.post(url, {
+            content: "QR 체크인 하세요!!",
+        });
+    } catch (error) {
+        console.log("send qr message error");
+    }
+};
+
+const qrCheckOut = async () => {
+    try {
+        const url = process.env.AEMON_WEBHOOK;
+        await axios.post(url, {
+            content: "QR 체크아웃 하세요!!",
+        });
+    } catch (error) {
+        console.log("send qr message error");
+    }
+};
+
 // 벌금 계산
 const checkFine = async () => {
     // 벌금 계산은 그냘 59분에 이뤄진다.
@@ -18,24 +40,6 @@ const checkFine = async () => {
                 { $set: { fine: fine + todayCheck } }
             );
         });
-    } catch (error) {
-        console.log(error);
-    }
-    const response = {
-        statusCode: 200,
-        body: JSON.stringify("Hello from Lambda!"),
-    };
-    return response;
-};
-
-// daily 커밋 확인
-const sendToChannel = async () => {
-    try {
-        const url = process.env.AEMON_WEBHOOK;
-        await axios.post(url, {
-            content: "오늘 하루도 고생하셨어요!! 커밋은 잊지 않으셨죠??",
-        });
-        console.log("send message");
     } catch (error) {
         console.log(error);
     }
@@ -108,6 +112,20 @@ class sendMessage {
                 if (hour === 23 && minute === 57) {
                     console.log("check fine announce");
                     checkFine();
+                }
+                if (
+                    (day === "Tue" || day === "Thu") &&
+                    hour === 9 &&
+                    minute === 50
+                ) {
+                    qrCheckIn();
+                }
+                if (
+                    (day === "Tue" || day === "Thu") &&
+                    hour === 17 &&
+                    minute === 50
+                ) {
+                    qrCheckOut();
                 }
             }, ms);
         });

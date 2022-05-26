@@ -3,11 +3,12 @@ import { UserModel } from "./db";
 import axios from "axios";
 import "dotenv/config";
 
-const qrCheckIn = async () => {
+const qrCheckInOut = async (hour) => {
     try {
         const url = process.env.AEMON_WEBHOOK;
+        const qrIn = qrCheckIn(hour);
         await axios.post(url, {
-            content: "QR 체크인 하세요!!",
+            embed: [qrIn],
         });
     } catch (error) {
         console.log("send qr message error");
@@ -92,7 +93,6 @@ const userFineStatus = async () => {
 
 // 시간에 맞춰 메세지 보내기 webhook으로 보내기
 class sendMessage {
-    // todo timer 일단 보류
     static timer(ms) {
         return new Promise((resolve) => {
             const timers = setInterval(() => {
@@ -118,14 +118,14 @@ class sendMessage {
                     hour === 9 &&
                     minute === 50
                 ) {
-                    qrCheckIn();
+                    qrCheckInOut(hour);
                 }
                 if (
                     (day === "Tue" || day === "Thu") &&
                     hour === 17 &&
                     minute === 50
                 ) {
-                    qrCheckOut();
+                    qrCheckInOut(hour);
                 }
             }, ms);
         });
@@ -181,6 +181,27 @@ const getDay = () => {
     let hour = date.getHours();
     let minute = date.getMinutes();
     return { day, hour, minute };
+};
+
+const qrCheckIn = (hour) => {
+    let title = "";
+    if (hour === 9) {
+        title = "QR 체크인 하세요!!";
+    } else {
+        title = "QR 체크아웃 하세요!!";
+    }
+    return {
+        type: "rich",
+        title,
+        description: "",
+        color: 0x82e983,
+        fields,
+        image: {
+            url: `https://user-images.githubusercontent.com/55802893/170393543-62d55eec-baf0-4b37-8603-6ee26b1d905d.png`,
+            height: 0,
+            width: 0,
+        },
+    };
 };
 
 // daily commit 확인

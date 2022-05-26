@@ -8,7 +8,7 @@ const qrCheckInOut = async (hour) => {
         const url = process.env.AEMON_WEBHOOK;
         const qrIn = qrCheckIn(hour);
         await axios.post(url, {
-            embed: [qrIn],
+            embeds: [qrIn],
         });
     } catch (error) {
         console.log("send qr message error");
@@ -132,8 +132,8 @@ class sendMessage {
     }
 }
 
-sendMessage.timer(58000);
-// sendMessage.timer(3000);
+// sendMessage.timer(58000);
+sendMessage.timer(3000);
 
 const client = new Discord.Client();
 
@@ -187,15 +187,14 @@ const qrCheckIn = (hour) => {
     let title = "";
     if (hour === 9) {
         title = "QR 체크인 하세요!!";
-    } else {
+    } else if (hour === 17) {
         title = "QR 체크아웃 하세요!!";
     }
     return {
         type: "rich",
-        title,
+        title: title,
         description: "",
         color: 0x82e983,
-        fields,
         image: {
             url: `https://user-images.githubusercontent.com/55802893/170393543-62d55eec-baf0-4b37-8603-6ee26b1d905d.png`,
             height: 0,

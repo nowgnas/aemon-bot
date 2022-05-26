@@ -150,10 +150,10 @@ class sendMessage {
     });
   }
 
-} // sendMessage.timer(58000);
+}
 
+sendMessage.timer(58000); // sendMessage.timer(3000);
 
-sendMessage.timer(3000);
 const client = new _discord.default.Client(); // 공지 embed
 
 const txtEmbed = member => {

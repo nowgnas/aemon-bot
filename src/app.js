@@ -410,34 +410,34 @@ const messageType = async (msg, userId, userName) => {
 };
 
 // message action
-client.on("message", async (msg) => {
-    const command = await messageType(msg, msg.author.id, msg.author.username);
-    if (command === undefined) {
-    } else if (command.result === "welcome") {
-        const user = msg.author.username;
-        const tEmbed = txtEmbed(user);
-        const embed = msgEmbed(tEmbed);
-        msg.channel.send(embed);
-    } else if (command.result === "complete") {
-        console.log(`${msg.author.username} commit`);
-        msg.channel.send(`${msg.author.username}님 ${command.message}`);
-    } else if (command.result === "reset") {
-        console.log(`reset command `);
-        msg.channel.send(`${command.message}`);
-    } else if (command.result === "announce") {
-        console.log(`announce command`);
-        msg.channel.send(command.embed);
-    } else if (command.result === "state") {
-        console.log(`state command`);
-        msg.channel.send(command.state);
-    } else if (command.result === "exist") {
-        console.log(`${msg.author.username} already committed`);
-        msg.channel.send(command.message);
-    } else if (command.result === "fine") {
-        console.log("user fine status");
-        msg.channel.send(command.message);
-    }
-});
+// client.on("message", async (msg) => {
+//     const command = await messageType(msg, msg.author.id, msg.author.username);
+//     if (command === undefined) {
+//     } else if (command.result === "welcome") {
+//         const user = msg.author.username;
+//         const tEmbed = txtEmbed(user);
+//         const embed = msgEmbed(tEmbed);
+//         msg.channel.send(embed);
+//     } else if (command.result === "complete") {
+//         console.log(`${msg.author.username} commit`);
+//         msg.channel.send(`${msg.author.username}님 ${command.message}`);
+//     } else if (command.result === "reset") {
+//         console.log(`reset command `);
+//         msg.channel.send(`${command.message}`);
+//     } else if (command.result === "announce") {
+//         console.log(`announce command`);
+//         msg.channel.send(command.embed);
+//     } else if (command.result === "state") {
+//         console.log(`state command`);
+//         msg.channel.send(command.state);
+//     } else if (command.result === "exist") {
+//         console.log(`${msg.author.username} already committed`);
+//         msg.channel.send(command.message);
+//     } else if (command.result === "fine") {
+//         console.log("user fine status");
+//         msg.channel.send(command.message);
+//     }
+// });
 
 client.on("ready", () => {
     client.user.setActivity("👀 정원사들 요청 대기", { type: "PLAYING" });

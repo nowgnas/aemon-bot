@@ -410,6 +410,7 @@ const messageType = async (msg, userId, userName) => {
 };
 
 // message action
+//
 client.on("message", async (msg) => {
     const command = await messageType(msg, msg.author.id, msg.author.username);
     if (command === undefined) {

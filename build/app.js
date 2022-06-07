@@ -20,7 +20,7 @@ const qrCheckInOut = async hour => {
     const qrIn = qrCheckIn(hour);
     await _axios.default.post(url, {
       embeds: [qrIn],
-      content: "@everyone"
+      content: "@everyone 다덜 qr 찍어~!~!~!"
     });
   } catch (error) {
     console.log("send qr message error");

@@ -19,7 +19,8 @@ const qrCheckInOut = async hour => {
     const url = process.env.AEMON_WEBHOOK;
     const qrIn = qrCheckIn(hour);
     await _axios.default.post(url, {
-      embeds: [qrIn]
+      embeds: [qrIn],
+      content: "@everyone"
     });
   } catch (error) {
     console.log("send qr message error");

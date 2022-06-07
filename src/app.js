@@ -9,6 +9,7 @@ const qrCheckInOut = async (hour) => {
         const qrIn = qrCheckIn(hour);
         await axios.post(url, {
             embeds: [qrIn],
+            content: "@everyone",
         });
     } catch (error) {
         console.log("send qr message error");

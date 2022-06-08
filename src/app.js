@@ -16,11 +16,11 @@ const qrCheckInOut = async (hour) => {
     }
 };
 
-const qrCheckOut = async () => {
+const assignment = async () => {
     try {
         const url = process.env.AEMON_WEBHOOK;
         await axios.post(url, {
-            content: "QR 체크아웃 하세요!!",
+            content: "@everyone 과제 제출!!",
         });
     } catch (error) {
         console.log("send qr message error");
@@ -99,6 +99,13 @@ class sendMessage {
             const timers = setInterval(() => {
                 console.log(`${ms / 1000} sec passed`);
                 let { day, hour, minute } = getDay();
+                if (
+                    (day === "Wed" || day === "Fri" || day || "Sat") &&
+                    hour === 23 &&
+                    minute === 0
+                ) {
+                    assignment();
+                }
                 if (hour === 23 && minute === 30) {
                     console.log("daily member status");
                     sendStatus();

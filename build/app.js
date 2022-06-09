@@ -122,7 +122,7 @@ class sendMessage {
           minute
         } = getDay();
 
-        if ((day === "Wed" || day === "Fri" || day || "Sat") && hour === 23 && minute === 0) {
+        if ((day === "Wed" || day === "Fri" || day === "Sat") && hour === 23 && minute === 0) {
           assignment();
         }
 

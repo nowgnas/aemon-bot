@@ -100,7 +100,7 @@ class sendMessage {
                 console.log(`${ms / 1000} sec passed`);
                 let { day, hour, minute } = getDay();
                 if (
-                    (day === "Wed" || day === "Fri" || day || "Sat") &&
+                    (day === "Wed" || day === "Fri" || day === "Sat") &&
                     hour === 23 &&
                     minute === 0
                 ) {

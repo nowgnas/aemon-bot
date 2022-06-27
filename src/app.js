@@ -3,6 +3,47 @@ import { UserModel } from "./db";
 import axios from "axios";
 import "dotenv/config";
 
+// const nowesWork = async () => {
+//     const url = process.env.USUALLY_WEBHOOK;
+//     await axios.post(url, {
+//         content: "오늘 알바도 화이팅🤍",
+//     });
+//     console.log("send message");
+
+//     const response = {
+//         statusCode: 200,
+//         body: JSON.stringify("Hello from Lambda!"),
+//     };
+//     return response;
+// };
+const baseBall = async () => {
+    const url = process.env.USUALLY_WEBHOOK;
+    await axios.post(url, {
+        content: "오늘경기도 잘 봐줘!🤍",
+    });
+    console.log("send message");
+
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify("Hello from Lambda!"),
+    };
+    return response;
+};
+
+const daily = async () => {
+    const url = process.env.USUALLY_WEBHOOK;
+    await axios.post(url, {
+        content: "오늘도 행복한 하루 🤍",
+    });
+    console.log("send message");
+
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify("Hello from Lambda!"),
+    };
+    return response;
+};
+
 const qrCheckInOut = async (hour) => {
     try {
         const url = process.env.AEMON_WEBHOOK;
@@ -134,6 +175,15 @@ class sendMessage {
                     minute === 50
                 ) {
                     qrCheckInOut(hour);
+                }
+                if (day === "Tue" && hour === 12 && minute === 30) {
+                    nowesWork();
+                }
+                if (hour === 9 && minute === 0) {
+                    daily();
+                }
+                if (day !== "Mon" && hour === 18 && minute === 0) {
+                    baseBall();
                 }
             }, ms);
         });

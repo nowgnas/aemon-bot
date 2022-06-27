@@ -14,6 +14,44 @@ function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "functio
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
+// const nowesWork = async () => {
+//     const url = process.env.USUALLY_WEBHOOK;
+//     await axios.post(url, {
+//         content: "오늘 알바도 화이팅🤍",
+//     });
+//     console.log("send message");
+//     const response = {
+//         statusCode: 200,
+//         body: JSON.stringify("Hello from Lambda!"),
+//     };
+//     return response;
+// };
+const baseBall = async () => {
+  const url = process.env.USUALLY_WEBHOOK;
+  await _axios.default.post(url, {
+    content: "오늘경기도 잘 봐줘!🤍"
+  });
+  console.log("send message");
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify("Hello from Lambda!")
+  };
+  return response;
+};
+
+const daily = async () => {
+  const url = process.env.USUALLY_WEBHOOK;
+  await _axios.default.post(url, {
+    content: "오늘도 행복한 하루 🤍"
+  });
+  console.log("send message");
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify("Hello from Lambda!")
+  };
+  return response;
+};
+
 const qrCheckInOut = async hour => {
   try {
     const url = process.env.AEMON_WEBHOOK;
@@ -150,6 +188,18 @@ class sendMessage {
 
         if ((day === "Tue" || day === "Thu") && hour === 17 && minute === 50) {
           qrCheckInOut(hour);
+        }
+
+        if (day === "Tue" && hour === 12 && minute === 30) {
+          nowesWork();
+        }
+
+        if (hour === 9 && minute === 0) {
+          daily();
+        }
+
+        if (day !== "Mon" && hour === 18 && minute === 0) {
+          baseBall();
         }
       }, ms);
     });

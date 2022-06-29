@@ -28,8 +28,12 @@ function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && 
 // };
 const baseBall = async () => {
   const url = process.env.USUALLY_WEBHOOK;
+  const minjung = process.env.JEAWON;
   await _axios.default.post(url, {
-    content: "오늘경기도 잘 봐줘!🤍"
+    content: "오늘 경기도"
+  });
+  await _axios.default.post(minjung, {
+    content: "잘 봐줘!🤍"
   });
   console.log("send message");
   const response = {
@@ -41,8 +45,12 @@ const baseBall = async () => {
 
 const daily = async () => {
   const url = process.env.USUALLY_WEBHOOK;
+  const minjung = process.env.JEAWON;
   await _axios.default.post(url, {
-    content: "오늘도 행복한 하루 🤍"
+    content: "세원이 오늘도 행복한 하루 🤍"
+  });
+  await _axios.default.post(minjung, {
+    content: "민정이 오늘도 행복한 하루 🤍"
   });
   console.log("send message");
   const response = {

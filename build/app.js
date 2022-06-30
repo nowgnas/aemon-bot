@@ -190,10 +190,6 @@ class sendMessage {
           checkFine();
         }
 
-        if ((day === "Tue" || day === "Thu") && hour === 9 && minute === 50) {
-          qrCheckInOut(hour);
-        }
-
         if ((day === "Tue" || day === "Thu") && hour === 17 && minute === 50) {
           qrCheckInOut(hour);
         }

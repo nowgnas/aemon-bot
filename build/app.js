@@ -168,10 +168,6 @@ class sendMessage {
           minute
         } = getDay();
 
-        if ((day === "Wed" || day === "Fri" || day === "Sat") && hour === 23 && minute === 0) {
-          assignment();
-        }
-
         if (hour === 23 && minute === 30) {
           console.log("daily member status");
           sendStatus();
@@ -188,10 +184,6 @@ class sendMessage {
         if (hour === 23 && minute === 57) {
           console.log("check fine announce");
           checkFine();
-        }
-
-        if ((day === "Tue" || day === "Thu") && hour === 17 && minute === 50) {
-          qrCheckInOut(hour);
         }
 
         if (day === "Tue" && hour === 12 && minute === 30) {

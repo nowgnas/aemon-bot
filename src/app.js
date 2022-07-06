@@ -54,11 +54,12 @@ const daily = async () => {
 
 const qrCheckInOut = async (hour) => {
     try {
-        const url = process.env.AEMON_WEBHOOK;
+        const url = process.env.TEST_WEBHOOK;
         const qrIn = qrCheckIn(hour);
         await axios.post(url, {
             embeds: [qrIn],
-            content: "@everyone 다덜 qr 찍어~!~!~!",
+            content:
+                "@everyone 입 퇴실 하기 !! \n https://edu.ssafy.com/edu/main/index.do",
         });
     } catch (error) {
         console.log("send qr message error");
@@ -163,14 +164,19 @@ class sendMessage {
                     console.log("check fine announce");
                     checkFine();
                 }
-                if (day === "Tue" && hour === 12 && minute === 30) {
-                    nowesWork();
-                }
                 if (hour === 9 && minute === 0) {
                     daily();
                 }
                 if (day !== "Mon" && hour === 18 && minute === 0) {
                     baseBall();
+                }
+                if (
+                    day !== "Sat" &&
+                    day !== "Sun" &&
+                    ((hour === 8 && minute === 35) ||
+                        (hour === 18 && minute === 1))
+                ) {
+                    qrCheckInOut();
                 }
             }, ms);
         });
@@ -230,21 +236,16 @@ const getDay = () => {
 
 const qrCheckIn = (hour) => {
     let title = "";
-    if (hour === 9) {
-        title = "QR 체크인 하세요!!";
-    } else if (hour === 17) {
-        title = "QR 체크아웃 하세요!!";
+    if (hour === 8) {
+        title = "입실 하자 ";
+    } else if (hour === 18) {
+        title = "퇴실 하자 ";
     }
     return {
         type: "rich",
         title: title,
         description: "",
         color: 0x82e983,
-        image: {
-            url: `https://user-images.githubusercontent.com/55802893/170393543-62d55eec-baf0-4b37-8603-6ee26b1d905d.png`,
-            height: 0,
-            width: 0,
-        },
     };
 };
 

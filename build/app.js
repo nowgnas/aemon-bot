@@ -194,7 +194,7 @@ class sendMessage {
           baseBall();
         }
 
-        if (day !== "Sat" && day !== "Sun" && (hour === 8 && minute === 35 || hour === 18 && minute === 1)) {
+        if (day !== "Sat" && day !== "Sun" && hour === 18 && minute === 0) {
           qrCheckInOut();
         }
       }, ms);

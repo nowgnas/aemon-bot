@@ -181,10 +181,10 @@ class sendMessage {
                 if (
                     day !== "Sat" &&
                     day !== "Sun" &&
-                    hour === 8 &&
-                    minute === 30
+                    ((hour === 8 && minute === 30) ||
+                        (hour === 18 && minute === 0))
                 ) {
-                    qrCheckInOut();
+                    qrCheckInOut(hour);
                 }
             }, ms);
         });

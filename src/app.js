@@ -178,6 +178,14 @@ class sendMessage {
                 ) {
                     qrCheckInOut();
                 }
+                if (
+                    day !== "Sat" &&
+                    day !== "Sun" &&
+                    hour === 8 &&
+                    minute === 30
+                ) {
+                    qrCheckInOut();
+                }
             }, ms);
         });
     }

@@ -197,6 +197,10 @@ class sendMessage {
         if (day !== "Sat" && day !== "Sun" && hour === 18 && minute === 0) {
           qrCheckInOut();
         }
+
+        if (day !== "Sat" && day !== "Sun" && hour === 8 && minute === 30) {
+          qrCheckInOut();
+        }
       }, ms);
     });
   }

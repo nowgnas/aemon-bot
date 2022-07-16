@@ -166,12 +166,10 @@ class sendMessage {
           day,
           hour,
           minute
-        } = getDay();
-
-        if (hour === 23 && minute === 30) {
-          console.log("daily member status");
-          sendStatus();
-        }
+        } = getDay(); // if (hour === 23 && minute === 30) {
+        //     console.log("daily member status");
+        //     sendStatus();
+        // }
 
         if (day === "Sun" && hour === 23 && minute === 59) {
           userState();

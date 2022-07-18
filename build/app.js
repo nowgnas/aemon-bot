@@ -166,17 +166,11 @@ class sendMessage {
           day,
           hour,
           minute
-        } = getDay(); // if (hour === 23 && minute === 30) {
-        //     console.log("daily member status");
-        //     sendStatus();
-        // }
+        } = getDay();
 
         if (day === "Sun" && hour === 23 && minute === 59) {
-          userState();
-          userFineStatus();
           resetCommitCount();
           console.log("reset user commit");
-          console.log("fine announce");
         }
 
         if (hour === 23 && minute === 57) {

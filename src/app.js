@@ -149,16 +149,10 @@ class sendMessage {
             const timers = setInterval(() => {
                 console.log(`${ms / 1000} sec passed`);
                 let { day, hour, minute } = getDay();
-                // if (hour === 23 && minute === 30) {
-                //     console.log("daily member status");
-                //     sendStatus();
-                // }
+
                 if (day === "Sun" && hour === 23 && minute === 59) {
-                    userState();
-                    userFineStatus();
                     resetCommitCount();
                     console.log("reset user commit");
-                    console.log("fine announce");
                 }
                 if (hour === 23 && minute === 57) {
                     console.log("check fine announce");

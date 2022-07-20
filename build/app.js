@@ -168,6 +168,11 @@ class sendMessage {
           minute
         } = getDay();
 
+        if (hour === 23 && minute === 30) {
+          console.log("daily member status");
+          sendStatus();
+        }
+
         if (day === "Sun" && hour === 23 && minute === 59) {
           resetCommitCount();
           console.log("reset user commit");

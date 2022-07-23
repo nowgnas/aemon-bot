@@ -3,7 +3,12 @@ import Discord, { MessageEmbed } from "discord.js";
 import { SaafyModel } from "../db";
 
 import axios from "axios";
-import { getDay, ssafyMessageType } from "../common/action";
+import {
+    getDay,
+    ssafyMessageType,
+    resetPost,
+    showPostList,
+} from "../common/action";
 
 const ssafy = new Discord.Client();
 
@@ -21,6 +26,13 @@ class sendMessage {
             const timers = setInterval(() => {
                 console.log(`${ms / 1000} sec passed`);
                 let { day, hour, minute } = getDay();
+                if (day === "Sun" && hour === 23 && minute === 50) {
+                    resetPost();
+                    console.log("post list reset");
+                }
+                if (day === "Sun" && hour === 20 && minute === 0) {
+                    showPostList();
+                }
             }, ms);
         });
     }
@@ -37,6 +49,8 @@ ssafy.on("message", async (msg) => {
     } else if (commad.result === "week") {
         msg.channel.send(commad.message);
     } else if (commad.result === "posting") {
+        msg.channel.send(commad.message);
+    } else if (commad.result === "reset") {
         msg.channel.send(commad.message);
     }
 });

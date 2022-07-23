@@ -43,23 +43,12 @@ const daily = async () => {
 
 const qrCheckInOut = async (hour) => {
     try {
-        const url = process.env.TEST_WEBHOOK;
+        const url = process.env.SSAFY_ALARM;
         const qrIn = qrCheckIn(hour);
         await axios.post(url, {
             embeds: [qrIn],
             content:
                 "@everyone 입 퇴실 하기 !! \n https://edu.ssafy.com/edu/main/index.do",
-        });
-    } catch (error) {
-        console.log("send qr message error");
-    }
-};
-
-const assignment = async () => {
-    try {
-        const url = process.env.AEMON_WEBHOOK;
-        await axios.post(url, {
-            content: "@everyone 과제 제출!!",
         });
     } catch (error) {
         console.log("send qr message error");

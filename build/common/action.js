@@ -1,12 +1,18 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.getDay = getDay;
 exports.messageEmbed = messageEmbed;
 exports.msgEmbed = msgEmbed;
+exports.resetPost = resetPost;
+exports.showPostList = showPostList;
 exports.ssafyMessageType = ssafyMessageType;
+
+var _axios = _interopRequireDefault(require("axios"));
 
 var _discord = _interopRequireWildcard(require("discord.js"));
 
@@ -57,6 +63,8 @@ async function ssafyMessageType(msg) {
       commandType = "week";
     } else if (command.includes("!commit")) {
       commandType = "commit";
+    } else if (command.includes("!reset")) {
+      commandType = "reset";
     }
 
     switch (commandType) {
@@ -96,19 +104,8 @@ async function ssafyMessageType(msg) {
         };
 
       case "week":
-        const {
-          title,
-          fields
-        } = await postingEmbed();
-        let embed = messageEmbed({
-          title,
-          fields
-        });
-        let embedMessage = msgEmbed(embed);
-        return {
-          result: "week",
-          message: embedMessage
-        };
+        await showPostList();
+        break;
 
       case "commit":
         const {
@@ -194,3 +191,35 @@ const postingEmbed = async () => {
     fields
   };
 };
+
+async function resetPost() {
+  await _db.SSAFYUserModel.updateMany({}, {
+    posting: []
+  });
+}
+
+async function showPostList() {
+  const {
+    title,
+    fields
+  } = await postingEmbed();
+  let embed = messageEmbed({
+    title,
+    fields
+  });
+  let embedMessage = msgEmbed(embed);
+
+  try {
+    const url = process.env.TEST_WEBHOOK;
+    await _axios.default.post(url, {
+      embeds: [embedMessage]
+    });
+    console.log("send message");
+  } catch (error) {}
+
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify("Hello from Lambda!")
+  };
+  return response;
+}

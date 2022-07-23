@@ -34,6 +34,15 @@ class sendMessage {
           hour,
           minute
         } = (0, _action.getDay)();
+
+        if (day === "Sun" && hour === 23 && minute === 50) {
+          (0, _action.resetPost)();
+          console.log("post list reset");
+        }
+
+        if (day === "Sun" && hour === 20 && minute === 0) {
+          (0, _action.showPostList)();
+        }
       }, ms);
     });
   }
@@ -48,6 +57,8 @@ ssafy.on("message", async msg => {
   } else if (commad.result === "week") {
     msg.channel.send(commad.message);
   } else if (commad.result === "posting") {
+    msg.channel.send(commad.message);
+  } else if (commad.result === "reset") {
     msg.channel.send(commad.message);
   }
 });

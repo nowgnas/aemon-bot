@@ -1,3 +1,4 @@
+import axios from "axios";
 import Discord, { MessageEmbed } from "discord.js";
 import { SSAFYUserModel } from "../db";
 
@@ -40,6 +41,8 @@ export async function ssafyMessageType(msg) {
             commandType = "week";
         } else if (command.includes("!commit")) {
             commandType = "commit";
+        } else if (command.includes("!reset")) {
+            commandType = "reset";
         }
 
         switch (commandType) {
@@ -67,13 +70,8 @@ export async function ssafyMessageType(msg) {
                     message,
                 };
             case "week":
-                const { title, fields } = await postingEmbed();
-                let embed = messageEmbed({ title, fields });
-                let embedMessage = msgEmbed(embed);
-                return {
-                    result: "week",
-                    message: embedMessage,
-                };
+                await showPostList();
+                break;
             case "commit":
                 const { day } = getDay();
                 const getUser = await SSAFYUserModel.findOne({ userId });
@@ -142,3 +140,26 @@ const postingEmbed = async () => {
         fields,
     };
 };
+
+export async function resetPost() {
+    await SSAFYUserModel.updateMany({}, { posting: [] });
+}
+
+export async function showPostList() {
+    const { title, fields } = await postingEmbed();
+    let embed = messageEmbed({ title, fields });
+    let embedMessage = msgEmbed(embed);
+
+    try {
+        const url = process.env.TEST_WEBHOOK;
+        await axios.post(url, {
+            embeds: [embedMessage],
+        });
+        console.log("send message");
+    } catch (error) {}
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify("Hello from Lambda!"),
+    };
+    return response;
+}

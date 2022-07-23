@@ -40,7 +40,6 @@ async function ssafyMessageType(msg) {
   const type = msg.type;
   let result = "";
   let message = "";
-  let title = "";
 
   if (type === "GUILD_MEMBER_JOIN") {
     return {
@@ -50,6 +49,7 @@ async function ssafyMessageType(msg) {
   } else if (type === "DEFAULT") {
     let commandType = "";
     const command = content.split(" ")[0];
+    const postUrl = content.split(" ")[1];
 
     if (command.includes("!posting")) {
       commandType = "posting";
@@ -61,16 +61,48 @@ async function ssafyMessageType(msg) {
 
     switch (commandType) {
       case "posting":
-        console.log("포스팅 성공!");
+        const ssafyUser = await _db.SSAFYUserModel.findOne({
+          userId
+        });
+
+        if (!ssafyUser) {
+          await _db.SSAFYUserModel.create({
+            userId,
+            userName,
+            posting: [postUrl]
+          });
+          result = "posting";
+          message = `${userName}님의 지식이 공유 되었습니다!!`;
+        } else {
+          await _db.SSAFYUserModel.updateOne({
+            userId,
+            userName
+          }, {
+            $push: {
+              posting: {
+                $each: [postUrl]
+              }
+            }
+          }, {
+            upsert: true
+          });
+          result = "posting";
+          message = `${userName}님의 지식이 공유 되었습니다!!`;
+        }
+
         return {
-          result: "posting",
-          message: "posting"
+          result,
+          message
         };
 
       case "week":
-        title = "한 주 동안의 포스팅 리스트입니다!";
+        const {
+          title,
+          fields
+        } = await postingEmbed();
         let embed = messageEmbed({
-          title
+          title,
+          fields
         });
         let embedMessage = msgEmbed(embed);
         return {
@@ -130,13 +162,35 @@ async function ssafyMessageType(msg) {
 function messageEmbed({
   title,
   description = "",
-  list = []
+  fields = []
 }) {
   return {
-    type: "article",
-    title: "title",
-    description: "",
-    color: 0x82e983,
-    list
+    type: "rich",
+    title,
+    description,
+    color: 0x53b0e2,
+    fields
   };
 }
+
+const postingEmbed = async () => {
+  const users = await _db.SSAFYUserModel.find({});
+  let fields = [];
+  let userObject = [...users];
+  userObject.forEach(element => {
+    let post = [...element.posting];
+    let message = "";
+    post.forEach(posting => {
+      message += `${posting}\n`;
+    });
+    fields.push({
+      name: element.userName,
+      value: message,
+      inline: false
+    });
+  });
+  return {
+    title: "이번 주에 공유된 지식들 입니다!",
+    fields
+  };
+};

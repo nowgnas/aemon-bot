@@ -47,5 +47,7 @@ ssafy.on("message", async msg => {
   if (commad === undefined) {} else if (commad.result === "welcome") {// 새로운 사람 추가 시 공지 알림
   } else if (commad.result === "week") {
     msg.channel.send(commad.message);
+  } else if (commad.result === "posting") {
+    msg.channel.send(commad.message);
   }
 });

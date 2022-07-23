@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import "dotenv/config";
 import { UserModel } from "./schema/user";
+import { SSAFYUserModel } from "./schema/ssafy/commit";
 
 const DB_URL = `${process.env.MONGODB_URL}/${process.env.CLUSTER_NANE}?retryWrites=true&w=majority`;
 
@@ -18,4 +19,4 @@ db.on("error", (error) =>
     )
 );
 
-export { UserModel };
+export { UserModel, SSAFYUserModel };

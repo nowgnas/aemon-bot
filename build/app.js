@@ -10,22 +10,14 @@ var _axios = _interopRequireDefault(require("axios"));
 
 require("dotenv/config");
 
+var _action = require("./common/action");
+
+var _ssafy = _interopRequireDefault(require("./ssafy/ssafy"));
+
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
-// const nowesWork = async () => {
-//     const url = process.env.USUALLY_WEBHOOK;
-//     await axios.post(url, {
-//         content: "오늘 알바도 화이팅🤍",
-//     });
-//     console.log("send message");
-//     const response = {
-//         statusCode: 200,
-//         body: JSON.stringify("Hello from Lambda!"),
-//     };
-//     return response;
-// };
 const baseBall = async () => {
   const url = process.env.USUALLY_WEBHOOK;
   const minjung = process.env.JEAWON;
@@ -90,7 +82,7 @@ const checkFine = async () => {
   try {
     const {
       day
-    } = getDay();
+    } = (0, _action.getDay)();
     const users = await _db.UserModel.find({});
     [...users].forEach(async ele => {
       let fine = ele.fine;
@@ -166,7 +158,7 @@ class sendMessage {
           day,
           hour,
           minute
-        } = getDay();
+        } = (0, _action.getDay)();
 
         if (hour === 23 && minute === 30) {
           console.log("daily member status");
@@ -236,19 +228,6 @@ const txtEmbed = member => {
       width: 0
     }
   };
-}; // 날짜 받기
-
-
-const getDay = () => {
-  const date = new Date();
-  let day = date.toString().slice(0, 3);
-  let hour = date.getHours();
-  let minute = date.getMinutes();
-  return {
-    day,
-    hour,
-    minute
-  };
 };
 
 const qrCheckIn = hour => {
@@ -274,7 +253,7 @@ const dailyStatus = users => {
   let userObject = [...users];
   const {
     day
-  } = getDay();
+  } = (0, _action.getDay)();
   userObject.forEach(async element => {
     let message = "";
 
@@ -378,18 +357,13 @@ const fineStatus = users => {
       width: 0
     }
   };
-}; // make message embed
-
-
-const msgEmbed = txtJson => {
-  return new _discord.MessageEmbed(txtJson);
 }; // 사용자들의 상태를 embed로 전송
 
 
 const userState = async () => {
   const users = await _db.UserModel.find({});
   const resEmbed = resultEmbed(users);
-  return msgEmbed(resEmbed);
+  return (0, _action.msgEmbed)(resEmbed);
 }; // command switch
 
 
@@ -425,7 +399,7 @@ const messageType = async (msg, userId, userName) => {
         let message = "";
         const {
           day
-        } = getDay();
+        } = (0, _action.getDay)();
         const getUser = await _db.UserModel.findOne({
           userId
         });
@@ -509,7 +483,7 @@ client.on("message", async msg => {
   if (command === undefined) {} else if (command.result === "welcome") {
     const user = msg.author.username;
     const tEmbed = txtEmbed(user);
-    const embed = msgEmbed(tEmbed);
+    const embed = (0, _action.msgEmbed)(tEmbed);
     msg.channel.send(embed);
   } else if (command.result === "complete") {
     console.log(`${msg.author.username} commit`);
@@ -537,4 +511,6 @@ client.on("ready", () => {
   });
   console.log(`logged in as ${client.user.tag}`);
 });
-client.login(process.env.TOKEN);
+client.login(process.env.TOKEN); // -----------------------
+
+_ssafy.default;

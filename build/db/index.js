@@ -5,6 +5,12 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+Object.defineProperty(exports, "SSAFYUserModel", {
+  enumerable: true,
+  get: function () {
+    return _commit.SSAFYUserModel;
+  }
+});
 Object.defineProperty(exports, "UserModel", {
   enumerable: true,
   get: function () {
@@ -17,6 +23,8 @@ var _mongoose = _interopRequireDefault(require("mongoose"));
 require("dotenv/config");
 
 var _user = require("./schema/user");
+
+var _commit = require("./schema/ssafy/commit");
 
 const DB_URL = `${process.env.MONGODB_URL}/${process.env.CLUSTER_NANE}?retryWrites=true&w=majority`;
 

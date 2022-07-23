@@ -3,19 +3,8 @@ import { UserModel } from "./db";
 import axios from "axios";
 import "dotenv/config";
 
-// const nowesWork = async () => {
-//     const url = process.env.USUALLY_WEBHOOK;
-//     await axios.post(url, {
-//         content: "오늘 알바도 화이팅🤍",
-//     });
-//     console.log("send message");
+import { getDay, msgEmbed } from "./common/action";
 
-//     const response = {
-//         statusCode: 200,
-//         body: JSON.stringify("Hello from Lambda!"),
-//     };
-//     return response;
-// };
 const baseBall = async () => {
     const url = process.env.USUALLY_WEBHOOK;
     const minjung = process.env.JEAWON;
@@ -230,15 +219,6 @@ const txtEmbed = (member) => {
     };
 };
 
-// 날짜 받기
-const getDay = () => {
-    const date = new Date();
-    let day = date.toString().slice(0, 3);
-    let hour = date.getHours();
-    let minute = date.getMinutes();
-    return { day, hour, minute };
-};
-
 const qrCheckIn = (hour) => {
     let title = "";
     if (hour === 8) {
@@ -356,11 +336,6 @@ const fineStatus = (users) => {
             width: 0,
         },
     };
-};
-
-// make message embed
-const msgEmbed = (txtJson) => {
-    return new MessageEmbed(txtJson);
 };
 
 // 사용자들의 상태를 embed로 전송
@@ -497,3 +472,8 @@ client.on("ready", () => {
 });
 
 client.login(process.env.TOKEN);
+
+// -----------------------
+import ssafy from "./ssafy/ssafy";
+
+ssafy;

@@ -352,7 +352,7 @@ const fineStatus = users => {
 const userState = async () => {
   const users = await _db.UserModel.find({});
   const resEmbed = resultEmbed(users);
-  return (0, _action.msgEmbed)(resEmbed);
+  return (0, _action.createMessageEmbed)(resEmbed);
 }; // command switch
 
 
@@ -472,7 +472,7 @@ client.on("message", async msg => {
   if (command === undefined) {} else if (command.result === "welcome") {
     const user = msg.author.username;
     const tEmbed = txtEmbed(user);
-    const embed = (0, _action.msgEmbed)(tEmbed);
+    const embed = (0, _action.createMessageEmbed)(tEmbed);
     msg.channel.send(embed);
   } else if (command.result === "complete") {
     console.log(`${msg.author.username} commit`);

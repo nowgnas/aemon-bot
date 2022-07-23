@@ -5,12 +5,13 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.createMessageEmbed = createMessageEmbed;
 exports.getDay = getDay;
 exports.messageEmbed = messageEmbed;
-exports.msgEmbed = msgEmbed;
 exports.resetPost = resetPost;
 exports.showPostList = showPostList;
 exports.ssafyMessageType = ssafyMessageType;
+exports.welcomMessage = welcomMessage;
 
 var _axios = _interopRequireDefault(require("axios"));
 
@@ -35,7 +36,7 @@ function getDay() {
   };
 }
 
-function msgEmbed(txtJson) {
+function createMessageEmbed(txtJson) {
   return new _discord.MessageEmbed(txtJson);
 }
 
@@ -50,7 +51,7 @@ async function ssafyMessageType(msg) {
   if (type === "GUILD_MEMBER_JOIN") {
     return {
       result: "welcome",
-      message: "님 SSAFY 19반 채널에 오신 것을 환영합니다!!"
+      message: `${userName}님 SSAFY 19반 채널에 오신 것을 환영합니다!!`
     };
   } else if (type === "DEFAULT") {
     let commandType = "";
@@ -65,9 +66,17 @@ async function ssafyMessageType(msg) {
       commandType = "commit";
     } else if (command.includes("!reset")) {
       commandType = "reset";
+    } else if (command.includes("!welcome")) {
+      commandType = "welcome";
     }
 
     switch (commandType) {
+      case "welcome":
+        return {
+          result: "welcome",
+          message: `${userName}님 19반 디스코드 채널에 오신 것을 환영합니다!!🎉`
+        };
+
       case "posting":
         const ssafyUser = await _db.SSAFYUserModel.findOne({
           userId
@@ -207,7 +216,7 @@ async function showPostList() {
     title,
     fields
   });
-  let embedMessage = msgEmbed(embed);
+  let embedMessage = createMessageEmbed(embed);
 
   try {
     const url = process.env.TEST_WEBHOOK;
@@ -222,4 +231,32 @@ async function showPostList() {
     body: JSON.stringify("Hello from Lambda!")
   };
   return response;
+}
+
+const welcomMessageEmbed = () => {
+  const fields = [{
+    name: `그룹 목적`,
+    value: `- 19반의 꾸준한 성장을 위해!!`
+  }, {
+    name: `사용 가능 명령`,
+    value: `- !commit : commit 채널에서 사진과 함께 명령어를 사용해 커밋 인증! \n- !posting : 공부한 내용 정리 후 "지식 공유 채널"에 경로 공유\n> ex) !posting https://example.com\n- !week : 한 주 동안 공유된 글을 확인 가능\n- !welcome : 공지 확인 가능`
+  }, {
+    name: `추가될 기능 `,
+    value: `- 데일리 과제 알림\n- 기간 내에 해야할 것 리마인드`
+  }];
+  return {
+    fields
+  };
+};
+
+function welcomMessage(title) {
+  const {
+    fields
+  } = welcomMessageEmbed();
+  const embed = messageEmbed({
+    title,
+    fields
+  });
+  const result = createMessageEmbed(embed);
+  return result;
 }

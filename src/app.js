@@ -3,7 +3,7 @@ import { UserModel } from "./db";
 import axios from "axios";
 import "dotenv/config";
 
-import { getDay, msgEmbed } from "./common/action";
+import { getDay, createMessageEmbed } from "./common/action";
 
 const baseBall = async () => {
     const url = process.env.USUALLY_WEBHOOK;
@@ -331,7 +331,7 @@ const fineStatus = (users) => {
 const userState = async () => {
     const users = await UserModel.find({});
     const resEmbed = resultEmbed(users);
-    return msgEmbed(resEmbed);
+    return createMessageEmbed(resEmbed);
 };
 
 // command switch
@@ -432,7 +432,7 @@ client.on("message", async (msg) => {
     } else if (command.result === "welcome") {
         const user = msg.author.username;
         const tEmbed = txtEmbed(user);
-        const embed = msgEmbed(tEmbed);
+        const embed = createMessageEmbed(tEmbed);
         msg.channel.send(embed);
     } else if (command.result === "complete") {
         console.log(`${msg.author.username} commit`);

@@ -1,8 +1,5 @@
-import Discord, { MessageEmbed } from "discord.js";
-// import { UserModel } from "./db";
-import { SaafyModel } from "../db";
+import Discord from "discord.js";
 
-import axios from "axios";
 import {
     getDay,
     ssafyMessageType,

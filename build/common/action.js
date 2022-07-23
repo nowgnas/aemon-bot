@@ -15,13 +15,9 @@ exports.welcomMessage = welcomMessage;
 
 var _axios = _interopRequireDefault(require("axios"));
 
-var _discord = _interopRequireWildcard(require("discord.js"));
+var _discord = require("discord.js");
 
 var _db = require("../db");
-
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 // 날짜 받기
 function getDay() {
@@ -219,7 +215,7 @@ async function showPostList() {
   let embedMessage = createMessageEmbed(embed);
 
   try {
-    const url = process.env.TEST_WEBHOOK;
+    const url = process.env.SSAFY_POST;
     await _axios.default.post(url, {
       embeds: [embedMessage]
     });
@@ -240,6 +236,12 @@ const welcomMessageEmbed = () => {
   }, {
     name: `사용 가능 명령`,
     value: `- !commit : commit 채널에서 사진과 함께 명령어를 사용해 커밋 인증! \n- !posting : 공부한 내용 정리 후 "지식 공유 채널"에 경로 공유\n> ex) !posting https://example.com\n- !week : 한 주 동안 공유된 글을 확인 가능\n- !welcome : 공지 확인 가능`
+  }, {
+    name: `제공되는 기능`,
+    value: `- 입 퇴실 알림\n- 한 주 동안 공유된 글 리스트`
+  }, {
+    name: `채널에서는요...`,
+    value: `- 스터디 개설\n- 오류 해결 시 도움되는 글 메모장 채널에 저장\n- 온라인 모각코\n- 자유로운 질의응답\n 등이 가능합니다!`
   }, {
     name: `추가될 기능 `,
     value: `- 데일리 과제 알림\n- 기간 내에 해야할 것 리마인드`

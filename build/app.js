@@ -57,8 +57,7 @@ const qrCheckInOut = async hour => {
     const url = process.env.SSAFY_ALARM;
     const qrIn = qrCheckIn(hour);
     await _axios.default.post(url, {
-      embeds: [qrIn],
-      content: "@everyone 입 퇴실 하기 !! \n https://edu.ssafy.com/edu/main/index.do"
+      embeds: [qrIn]
     });
   } catch (error) {
     console.log("send qr message error");
@@ -223,16 +222,16 @@ const qrCheckIn = hour => {
   let title = "";
 
   if (hour === 8) {
-    title = "입실 하자 ";
+    title = "@everyone입실 확인하세요!!\n https://edu.ssafy.com/edu/main/index.do";
   } else if (hour === 18) {
-    title = "퇴실 하자 ";
+    title = "@everyone퇴실 확인하세요!!\n https://edu.ssafy.com/edu/main/index.do";
   }
 
   return {
     type: "rich",
     title: title,
     description: "",
-    color: 0x82e983
+    color: 0x53b0e2
   };
 }; // daily commit 확인
 

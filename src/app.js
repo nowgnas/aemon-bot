@@ -47,8 +47,6 @@ const qrCheckInOut = async (hour) => {
         const qrIn = qrCheckIn(hour);
         await axios.post(url, {
             embeds: [qrIn],
-            content:
-                "@everyone 입 퇴실 하기 !! \n https://edu.ssafy.com/edu/main/index.do",
         });
     } catch (error) {
         console.log("send qr message error");
@@ -211,15 +209,17 @@ const txtEmbed = (member) => {
 const qrCheckIn = (hour) => {
     let title = "";
     if (hour === 8) {
-        title = "입실 하자 ";
+        title =
+            "@everyone입실 확인하세요!!\n https://edu.ssafy.com/edu/main/index.do";
     } else if (hour === 18) {
-        title = "퇴실 하자 ";
+        title =
+            "@everyone퇴실 확인하세요!!\n https://edu.ssafy.com/edu/main/index.do";
     }
     return {
         type: "rich",
         title: title,
         description: "",
-        color: 0x82e983,
+        color: 0x53b0e2,
     };
 };
 

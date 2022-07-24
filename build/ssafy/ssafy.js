@@ -55,5 +55,7 @@ ssafy.on("message", async msg => {
     msg.channel.send(commad.message);
   } else if (commad.result === "reset") {
     msg.channel.send(commad.message);
+  } else if (commad.result === "complete") {
+    msg.channel.send(commad.message);
   }
 });

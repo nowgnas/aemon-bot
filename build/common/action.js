@@ -51,8 +51,10 @@ async function ssafyMessageType(msg) {
     };
   } else if (type === "DEFAULT") {
     let commandType = "";
-    const command = content.split(" ")[0];
-    const postUrl = content.split(" ")[1];
+    const commandList = content.split(" ");
+    const command = commandList[0];
+    const post = commandList.slice(1, commandList.length);
+    const postUrl = post.join(" ");
 
     if (command.includes("!posting")) {
       commandType = "posting";
@@ -146,7 +148,7 @@ async function ssafyMessageType(msg) {
               upsert: true
             });
             result = "complete";
-            message = message = "오늘도 commit 성공!!";
+            message = "오늘도 commit 성공!!";
           }
         }
 

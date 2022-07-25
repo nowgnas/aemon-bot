@@ -57,7 +57,8 @@ const qrCheckInOut = async hour => {
     const url = process.env.SSAFY_ALARM;
     const qrIn = qrCheckIn(hour);
     await _axios.default.post(url, {
-      embeds: [qrIn]
+      embeds: [qrIn],
+      content: "@everyone"
     });
   } catch (error) {
     console.log("send qr message error");
@@ -222,9 +223,9 @@ const qrCheckIn = hour => {
   let title = "";
 
   if (hour === 8) {
-    title = "@everyone입실 확인하세요!!\n https://edu.ssafy.com/edu/main/index.do";
+    title = "입실 확인하세요!!\n https://edu.ssafy.com/edu/main/index.do";
   } else if (hour === 18) {
-    title = "@everyone퇴실 확인하세요!!\n https://edu.ssafy.com/edu/main/index.do";
+    title = "퇴실 확인하세요!!\n https://edu.ssafy.com/edu/main/index.do";
   }
 
   return {
@@ -418,7 +419,7 @@ const messageType = async (msg, userId, userName) => {
               upsert: true
             });
             result = "complete";
-            message = message = "오늘도 commit 성공!!";
+            message = "오늘도 commit 성공!!";
           }
         }
 

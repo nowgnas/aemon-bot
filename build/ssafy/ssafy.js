@@ -39,6 +39,10 @@ class sendMessage {
           // daily 과제 초기화
           (0, _action.resetDailyAssignment)();
         }
+
+        if (hour === 22 && minute === 0) {
+          (0, _action.announceAssignment)();
+        }
       }, ms);
     });
   }

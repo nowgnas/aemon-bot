@@ -5,6 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.announceAssignment = announceAssignment;
 exports.createMessageEmbed = createMessageEmbed;
 exports.getDay = getDay;
 exports.messageEmbed = messageEmbed;
@@ -78,10 +79,6 @@ async function ssafyMessageType(msg) {
       case "daily":
         // 데일리 과제
         const dailyList = postUrl.split(",");
-        let dailyMsg = "";
-        dailyList.forEach(ele => {
-          dailyMsg += `- ${ele}\n`;
-        });
         const dailyTodo = await _db.AssignmentSchemaModel.findOne({
           state: "daily"
         });
@@ -92,16 +89,18 @@ async function ssafyMessageType(msg) {
             state: "daily"
           });
         } else {
-          await _db.AssignmentSchemaModel.updateOne({
-            state: "daily"
-          }, {
-            $push: {
-              assign: {
-                $each: [dailyMsg]
+          dailyList.forEach(async element => {
+            await _db.AssignmentSchemaModel.updateOne({
+              state: "daily"
+            }, {
+              $push: {
+                assign: {
+                  $each: [element]
+                }
               }
-            }
-          }, {
-            upsert: true
+            }, {
+              upsert: true
+            });
           });
           result = "daily";
           message = "데일리 과제가 추가되었습니다!";
@@ -315,4 +314,34 @@ async function resetDailyAssignment() {
   await _db.AssignmentSchemaModel.updateMany({}, {
     assign: []
   });
+}
+
+async function announceAssignment() {
+  const daily = await _db.AssignmentSchemaModel.findOne({
+    state: "daily"
+  });
+  let message = "";
+  const dailyAssign = [...daily.assign];
+
+  if (dailyAssign.length > 0) {
+    dailyAssign.forEach(element => {
+      message += `- ${element}\n`;
+    });
+
+    try {
+      const url = process.env.SSAFY_ALARM;
+      await _axios.default.post(url, {
+        content: message
+      });
+      console.log("send message");
+    } catch (error) {}
+
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify("Hello from Lambda!")
+    };
+    return response;
+  } else {
+    console.log("no assignment");
+  }
 }

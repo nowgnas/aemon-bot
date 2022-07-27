@@ -7,6 +7,7 @@ import {
     showPostList,
     welcomMessage,
     resetDailyAssignment,
+    announceAssignment,
 } from "../common/action";
 
 const ssafy = new Discord.Client();
@@ -35,6 +36,9 @@ class sendMessage {
                 if (hour === 23 && minute === 30) {
                     // daily 과제 초기화
                     resetDailyAssignment();
+                }
+                if (hour === 22 && minute === 0) {
+                    announceAssignment();
                 }
             }, ms);
         });

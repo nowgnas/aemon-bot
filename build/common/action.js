@@ -8,6 +8,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.createMessageEmbed = createMessageEmbed;
 exports.getDay = getDay;
 exports.messageEmbed = messageEmbed;
+exports.resetDailyAssignment = resetDailyAssignment;
 exports.resetPost = resetPost;
 exports.showPostList = showPostList;
 exports.ssafyMessageType = ssafyMessageType;
@@ -52,7 +53,8 @@ async function ssafyMessageType(msg) {
   } else if (type === "DEFAULT") {
     let commandType = "";
     const commandList = content.split(" ");
-    const command = commandList[0];
+    const command = commandList[0]; // 명령어
+
     const post = commandList.slice(1, commandList.length);
     const postUrl = post.join(" ");
 
@@ -66,9 +68,53 @@ async function ssafyMessageType(msg) {
       commandType = "reset";
     } else if (command.includes("!welcome")) {
       commandType = "welcome";
+    } else if (command.includes("!daily")) {
+      commandType = "daily";
+    } else if (command.includes("!todo")) {
+      commandType = "todo";
     }
 
     switch (commandType) {
+      case "daily":
+        // 데일리 과제
+        const dailyList = postUrl.split(",");
+        let dailyMsg = "";
+        dailyList.forEach(ele => {
+          dailyMsg += `- ${ele}\n`;
+        });
+        const dailyTodo = await _db.AssignmentSchemaModel.findOne({
+          state: "daily"
+        });
+
+        if (!dailyTodo) {
+          await _db.AssignmentSchemaModel.create({
+            assign: [],
+            state: "daily"
+          });
+        } else {
+          await _db.AssignmentSchemaModel.updateOne({
+            state: "daily"
+          }, {
+            $push: {
+              assign: {
+                $each: [dailyMsg]
+              }
+            }
+          }, {
+            upsert: true
+          });
+          result = "daily";
+          message = "데일리 과제가 추가되었습니다!";
+        }
+
+        return {
+          result,
+          message
+        };
+
+      case "todo":
+        break;
+
       case "welcome":
         return {
           result: "welcome",
@@ -263,4 +309,10 @@ function welcomMessage(title) {
   });
   const result = createMessageEmbed(embed);
   return result;
+}
+
+async function resetDailyAssignment() {
+  await _db.AssignmentSchemaModel.updateMany({}, {
+    assign: []
+  });
 }

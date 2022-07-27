@@ -34,6 +34,11 @@ class sendMessage {
         if (day === "Sun" && hour === 20 && minute === 0) {
           (0, _action.showPostList)();
         }
+
+        if (hour === 23 && minute === 30) {
+          // daily 과제 초기화
+          (0, _action.resetDailyAssignment)();
+        }
       }, ms);
     });
   }

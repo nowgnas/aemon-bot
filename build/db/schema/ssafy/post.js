@@ -3,25 +3,21 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.PostSSAFYModel = void 0;
+exports.AssignmentSchemaModel = void 0;
 
 var _mongoose = require("mongoose");
 
-const PostSchema = new _mongoose.Schema({
-  userId: {
-    type: String,
-    required: true
-  },
-  userName: {
-    type: String,
-    required: true
-  },
-  postingList: {
+const AssignmentSchema = new _mongoose.Schema({
+  assign: {
     type: [String],
     required: false
+  },
+  state: {
+    type: String,
+    required: true
   }
 }, {
   timestamps: true
 });
-const PostSSAFYModel = (0, _mongoose.model)("SSAFYUser", PostSchema);
-exports.PostSSAFYModel = PostSSAFYModel;
+const AssignmentSchemaModel = (0, _mongoose.model)("Assignment", AssignmentSchema);
+exports.AssignmentSchemaModel = AssignmentSchemaModel;

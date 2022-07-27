@@ -1,18 +1,14 @@
 import { Schema, model } from "mongoose";
 
-const PostSchema = new Schema(
+const AssignmentSchema = new Schema(
     {
-        userId: {
-            type: String,
-            required: true,
-        },
-        userName: {
-            type: String,
-            required: true,
-        },
-        postingList: {
+        assign: {
             type: [String],
             required: false,
+        },
+        state: {
+            type: String,
+            required: true,
         },
     },
     {
@@ -20,6 +16,6 @@ const PostSchema = new Schema(
     }
 );
 
-const PostSSAFYModel = model("SSAFYUser", PostSchema);
+const AssignmentSchemaModel = model("Assignment", AssignmentSchema);
 
-export { PostSSAFYModel };
+export { AssignmentSchemaModel };

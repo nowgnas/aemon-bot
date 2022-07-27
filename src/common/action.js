@@ -1,6 +1,6 @@
 import axios from "axios";
 import { MessageEmbed } from "discord.js";
-import { SSAFYUserModel } from "../db";
+import { SSAFYUserModel, AssignmentSchemaModel } from "../db";
 
 // 날짜 받기
 export function getDay() {
@@ -34,7 +34,8 @@ export async function ssafyMessageType(msg) {
 
         const commandList = content.split(" ");
 
-        const command = commandList[0];
+        const command = commandList[0]; // 명령어
+
         const post = commandList.slice(1, commandList.length);
         const postUrl = post.join(" ");
 
@@ -48,9 +49,45 @@ export async function ssafyMessageType(msg) {
             commandType = "reset";
         } else if (command.includes("!welcome")) {
             commandType = "welcome";
+        } else if (command.includes("!daily")) {
+            commandType = "daily";
+        } else if (command.includes("!todo")) {
+            commandType = "todo";
         }
 
         switch (commandType) {
+            case "daily":
+                // 데일리 과제
+                const dailyList = postUrl.split(",");
+                let dailyMsg = "";
+                dailyList.forEach((ele) => {
+                    dailyMsg += `- ${ele}\n`;
+                });
+                const dailyTodo = await AssignmentSchemaModel.findOne({
+                    state: "daily",
+                });
+                if (!dailyTodo) {
+                    await AssignmentSchemaModel.create({
+                        assign: [],
+                        state: "daily",
+                    });
+                } else {
+                    await AssignmentSchemaModel.updateOne(
+                        { state: "daily" },
+                        { $push: { assign: { $each: [dailyMsg] } } },
+                        { upsert: true }
+                    );
+                    result = "daily";
+                    message = "데일리 과제가 추가되었습니다!";
+                }
+                return {
+                    result,
+                    message,
+                };
+
+            case "todo":
+                break;
+
             case "welcome":
                 return {
                     result: "welcome",
@@ -207,4 +244,8 @@ export function welcomMessage(title) {
     const embed = messageEmbed({ title, fields });
     const result = createMessageEmbed(embed);
     return result;
+}
+
+export async function resetDailyAssignment() {
+    await AssignmentSchemaModel.updateMany({}, { assign: [] });
 }

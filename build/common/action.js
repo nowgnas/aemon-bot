@@ -320,7 +320,7 @@ async function announceAssignment() {
   const daily = await _db.AssignmentSchemaModel.findOne({
     state: "daily"
   });
-  let message = "";
+  let message = "@everyone\n오늘 할일은??\n";
   const dailyAssign = [...daily.assign];
 
   if (dailyAssign.length > 0) {

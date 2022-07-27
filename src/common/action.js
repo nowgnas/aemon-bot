@@ -251,7 +251,7 @@ export async function resetDailyAssignment() {
 
 export async function announceAssignment() {
     const daily = await AssignmentSchemaModel.findOne({ state: "daily" });
-    let message = "";
+    let message = "@everyone\n오늘 할일은??\n";
     const dailyAssign = [...daily.assign];
     if (dailyAssign.length > 0) {
         dailyAssign.forEach((element) => {
